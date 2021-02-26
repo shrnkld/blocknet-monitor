@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<!-- Meta, title, CSS, favicons, etc. -->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="referrer" content="no-referrer"> 
+
+	<title><?=$title?> - Blocknet Monitor</title>
+
+	<link href="assets/images/favicon.ico" rel="icon">
+
+	<!-- Bootstrap -->
+	<link href="assets/css/bootstrap.css" rel="stylesheet">
+	<!-- My font -->
+	<!--link href="assets/css/myfont.css" rel="stylesheet"-->
+	<!-- Font Awesome -->
+	<link href="assets/css/font-awesome.min.css" rel="stylesheet">
+	<!-- Datatables -->
+	<link href="assets/css/dataTables.bootstrap.min.css" rel="stylesheet">
+	<link href="assets/css/buttons.bootstrap.min.css" rel="stylesheet"> 
+	<!-- JQVMap -->
+	<link href="assets/css/jqvmap.min.css" rel="stylesheet">
+	<!-- Switchery -->
+	<link href="assets/css/switchery.min.css" rel="stylesheet">
+
+	<link href="assets/css/bootstrap-multiselect.css" rel="stylesheet">
+	<!-- Custom Theme Style -->
+	<link href="assets/css/custom.css" rel="stylesheet">
+
+	<!-- Lightweight tracking -->
+	<script async defer data-domain="blocknetmonitor.com" src="https://plausible.io/js/plausible.js"></script>
+  </head>
+
+  <body class="nav-md">
+	<div class="container body">
+	  <div class="main_container">
+		<div class="col-md-3 left_col">
+		  <div class="left_col scroll-view">
+			<div class="navbar nav_title" style="border-bottom: 1px solid #416182;">
+				<a href="index.php" class="site_title"><i class="fas fa-cube fa-lg" style="color:white"></i> <span>Blocknet Monitor</span></a>
+			</div>
+			<hr>
+			<div class="clearfix"></div>
+
+			<!-- sidebar menu -->
+			<div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+			  <div class="menu_section">
+				<ul class="nav side-menu">
+					<a href="?p=main" <?php if($this->section=="main") echo 'class="active"'; ?>><i class="fas fa-home"></i> Main </a>
+					<a href="?p=servicenodes" <?php if($this->section=="servicenodes") echo 'class="active"'; ?>><i class="fas fa-sitemap"></i> Servicenodes </a>
+					<a href="?p=proposals" <?php if($this->section=="proposals") echo 'class="active"'; ?>><i class="far fa-paper-plane"></i> Proposals </a>
+					<a href="?p=pastproposals" <?php if($this->section=="pastproposals") echo 'class="active"'; ?>><i class="far fa-paper-plane"></i> Past Proposals </a>
+					<a href="?p=openorders" <?php if($this->section=="openorders") echo 'class="active"'; ?>><i class="fas fa-exchange-alt"></i> Open Orders </a>
+					<a href="?p=past1" <?php if($this->section=="pastorders") echo 'class="active"'; ?>><i class="fas fa-exchange-alt"></i> Past Orders (1 day) </a>
+					<ul class="nav child_menu" style="display: block;">
+						<li <?php if($this->section=="past7") echo 'class="active"'; ?>><a href="?p=past7"> 7 days</a></li>
+						<li <?php if($this->section=="past14") echo 'class="active"'; ?>><a href="?p=past14">14 days</a></li>
+						<li <?php if($this->section=="past30") echo 'class="active"'; ?>><a href="?p=past30">30 days</a></li>
+					</ul>
+					<a href="?p=peers" <?php if($this->section=="peers") echo 'class="active"'; ?>><i class="fas fa-user-friends"></i> Peers </a>
+					<a href="?p=blocks" <?php if($this->section=="blocks") echo 'class="active"'; ?>><i class="fas fa-cube"></i> Blocks</a>
+					<ul class="nav child_menu" style="display: block;">
+						<li <?php if($this->section=="forks") echo 'class="active"'; ?>><a href="?p=forks">Forks</a></li>
+					</ul>
+					<a href="?p=mempool" <?php if($this->section=="mempool") echo 'class="active"'; ?>><i class="fas fa-database"></i> Memory Pool </a>
+					<a href="?p=about" <?php if($this->section=="about") echo 'class="active"'; ?>><i class="fas fa-info"></i> About </a>
+				</ul>
+			  </div>
+			</div>
+			<!-- /sidebar menu -->
+
+		  </div>
+		</div>
+
+		<!-- page content -->
+		<div class="right_col" role="main" style="min-height:100%;">

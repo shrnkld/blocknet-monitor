@@ -1,0 +1,31 @@
+@font-face {
+  font-family: 'walkjivefly';
+  src:  url('../fonts/walkjivefly.eot?bpkxw4');
+  src:  url('../fonts/walkjivefly.svg?bpkxw4#walkjivefly') format('svg'),
+    url('../fonts/walkjivefly.eot?bpkxw4#iefix') format('embedded-opentype'),
+    url('../fonts/walkjivefly.ttf?bpkxw4') format('truetype'),
+    url('../fonts/walkjivefly.woff?bpkxw4') format('woff');
+    ;
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+i {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'walkjivefly' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-blockdx_icon:before {
+  content: "\e900";
+}

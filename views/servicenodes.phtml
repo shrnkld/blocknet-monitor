@@ -1,0 +1,213 @@
+		<!-- Top Info Bar -->
+		<div class="panel panel-default">  
+			<div class="panel-body">
+				<div class="row tile_count">
+					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-sitemap"></i> Servicenodes</span>
+					  <div class="count"><?= $content['totalNodes'] ?> </div>
+					  <span class="count_bottom"> Known </span>
+					</div>
+					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-sitemap"></i> </span>
+					  <div class="count"><?= $content['onlineNodes'] ?> </div>
+					  <span class="count_bottom"> Online </span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Top Info Bar End-->
+		<div class="clearfix"></div>
+		<div class="row">
+			<div class="col-md-3 col-sm-3 col-xs-12">
+				<?php if(!empty($error)){ ?> <div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<?= $error ?> </div><?php }
+				if(!empty($message)){ ?> <div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<?= $message ?> </div><?php } ?>
+			</div>  
+		</div>
+
+		<!-- Content -->				   
+		<div class="row">
+			<!-- Servicenodes list -->
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="x_panel">
+					<div class="x_title">
+						<h2>Servicenodes<small> - </small></h2>
+						<ul class="nav navbar-right panel_toolbox">
+							<li><a class="close-link"><i class="fa fa-times"></i></a></li>
+							<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+						</ul>
+						<div class="clearfix"></div>
+					</div>
+					<div class="x_content">
+						<table id="nodes" class="table table-striped table-bordered table-valign">
+							<thead>
+								<tr>
+									<th>Snodekey</th>
+							 		<th>Tier</th>
+							 		<th>Address</th>
+									<!-- th>IP address</th-->
+									<?php if($content['geo']){ ?><th>Country</th> <?php } ?>
+									<th>Last seen</th>
+									<th>EXR</th>
+									<th>Status</th>
+									<th>Score</th>
+									<th>Services</th>
+								</tr>
+					  		</thead>
+							<tbody>
+								<?php foreach($content['nodes'] as $node){ ?>
+									<tr>
+										<td><?=$node->snodekey ?></td>
+										<td><?=$node->tier ?></td>
+										<td><?=$node->address ?></td>
+										<!--td><?=$node->IP ?></td-->
+										<?php if($content['geo']){?><td><?php if(!empty($node->country)){ ?><img src="assets/images/flags/16/<?=$node->country ?>.png" /> <?php echo $node->country; } ?></td><?php } ?>  
+									  	<td><?=$node->timeLastSeenStr ?></td>
+										<td><?=$node->exr ?></td>
+										<td><?=$node->status ?></td>
+										<td><?=$node->score ?></td>
+										<td> Coming soon										   
+											<!--div class="btn-group pull-left" style="padding:5px 0 3px 0px; margin-bottom:0px">
+												<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													<span class="caret"></span>
+													<span class="sr-only">Toggle Dropdown</span>
+												</button>
+												<ul class="dropdown-menu">
+													<li><a href="https://chainz.cryptoid.info/block/tx.dws?<?= $node->txid ?>" target="_blank"><i class="fa fa-globe fa-lg" style="color:lightblue"></i> Chainz</a></li>
+												</ul>
+											</div-->										   
+								   		</td>										   
+									</tr>
+								<?php } ?>						
+							</tbody>
+						</table>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="clearfix"></div>
+			<div class="row">
+
+			<?php if($content['geo']){?>  
+			<!-- World Map -->  
+			<div class="col-md-10 col-sm-10 col-xs-12">
+			  <div class="x_panel">
+				<div class="x_title">
+				  <h2>Global Servicenode Distribution</h2>
+				  <ul class="nav navbar-right panel_toolbox">
+					<li><a class="close-link"><i class="fas fa-times"></i></a>
+					</li><li><a class="collapse-link"><i class="fas fa-chevron-up"></i></a>
+					</li>
+
+				  </ul>
+				  <div class="clearfix"></div>
+				</div>
+				<div class="x_content">
+				  <div class="dashboard-widget-content">
+					<div class="col-md-4 hidden-small">
+					  <table class="countries_list">
+						<tbody>   
+						<?php $i = 1;
+						foreach($content['map']['desc'] as $cName => $country){
+						?>
+							<tr>
+								<td style="padding-right:0px;width:33px"><?= $i ?>.</td><td style="padding-left:0px;padding-right:0px;width:32px"><img src="assets/images/flags/16/<?= $cName ?>.png" /></td><td style="padding-left:2px;"> <?= $cName ?></td><td style="padding-right:0px;width:35px"><?= $country['count'] ?></td><td style="padding-left:0px;padding-right:0px;width:45px">(<?= $country['share'] ?>%)</td>									 
+							</tr>
+						<?php 
+							$i++; 
+						} 
+						?>
+						</tbody>
+					  </table>
+					</div>
+					<div id="world-map-gdp" class="col-md-8 col-sm-12 col-xs-12" style="height:330px;"></div>
+				  </div>
+				</div>
+			  </div>
+			</div>
+			<!-- World Map End -->
+			<?php } ?>
+
+			
+			
+ 
+			</div>
+		   </div>
+
+
+		<!-- /page content -->
+		</div>
+
+		<!-- footer content -->
+		<?php include('views/footer.phtml') ?>
+		<!-- /footer content -->
+		</div>
+		</div>
+
+		<!-- jQuery -->
+		<script src="assets/js/jquery.min.js"></script>
+		<!-- Bootstrap -->
+		<script src="assets/js/bootstrap.min.js"></script>
+		<!-- Datatables -->
+		<script src="assets/js/jquery.dataTables.min.js"></script>
+		<script src="assets/js/dataTables.bootstrap.min.js"></script>
+		<script src="assets/js/dataTables.buttons.min.js"></script>
+		<script src="assets/js/responsive.bootstrap.js"></script>
+
+		<!-- Custom Theme Scripts -->
+		<script src="assets/js/custom.min.js"></script>
+
+		<!-- Datatables -->
+		<script>
+	 		$(document).ready(function() {
+			$('#nodes').DataTable( {
+				"paging": true,
+				"lengthChange": true,
+				"lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+				"bInfo": false,
+				"order": [[ 6, "desc" ]]
+			} );		
+	  		});
+		</script>
+		<!-- /Datatables -->
+
+		<?php
+	if($content['geo']){
+		echo "<script>".$content['map']['data']."</script>";
+	?>
+		<!-- JQVMap -->
+		<script src="assets/js/jquery.vmap.min.js"></script>
+		<script src="assets/js/jquery.vmap.world.js"></script>
+		<script>
+		  $(document).ready(function(){
+			$('#world-map-gdp').vectorMap({
+				map: 'world_en',
+				backgroundColor: null,
+				color: '#ffffff',
+				hoverOpacity: 0.7,
+				selectedColor: '#666666',
+				enableZoom: false,
+				showTooltip: true,
+				values: peerData,
+				onLabelShow: function (event, label, code) {
+					if (peerData[code]!==undefined)
+					{
+						label.append(' ('+peerData[code]+')'); 
+					} else {
+						label.append(' (No Peers)'); 
+				   }				
+				},
+				scaleColors: ['#9ac6e5', '#2a70a2'],
+				normalizeFunction: 'polynomial'
+			});
+		  });
+		</script>
+		<!-- /JQVMap -->
+	<?php } ?>
+
+
+  	</body>
+</html>

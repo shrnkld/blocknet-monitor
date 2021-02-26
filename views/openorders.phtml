@@ -1,0 +1,107 @@
+		<!-- Top Info Bar -->
+		<div class="panel panel-default">  
+			<div class="panel-body">
+				<div class="row tile_count">
+					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
+						<span class="count_top"><i class="fas fa-exchange-alt"></i> BlockDX orders</span>
+						<div class="count"><?= $content['openOrderCount'] ?> <small>Open</small></div>
+						<span class="count_bottom"><?= $content["rolledBackCount"] ?> Rolled back</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Top Info Bar End-->
+		<div class="clearfix"></div>
+		<div class="row">
+			<div class="col-md-3 col-sm-3 col-xs-12">
+				<?php if(!empty($error)){ ?> <div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<?= $error ?> </div><?php }
+				if(!empty($message)){ ?> <div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<?= $message ?> </div><?php } ?>
+			</div>  
+		</div>
+
+		<!-- Content -->				   
+		<div class="row">
+			<!-- Open orders list -->
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="x_panel">
+					<div class="x_title">
+						<h2>Orders<small>Currently active in BlockDX</small></h2>
+						<ul class="nav navbar-right panel_toolbox">
+							<li><a class="close-link"><i class="fa fa-times"></i></a></li>
+							<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+						</ul>
+						<div class="clearfix"></div>
+					</div>
+					<div class="x_content">
+						<table id="orders" class="table table-striped table-bordered table-valign">
+							<thead>
+								<tr>
+							 		<!--th>ID</th-->
+							 		<th>Maker</th>
+									<th>Maker Size</th>
+									<th>Taker</th>
+									<th>Taker Size</th>
+									<th>Updated</th>
+									<th>Type</th>
+									<th>Status</th>
+								</tr>
+					  		</thead>
+							<tbody>
+								<?php if ($content['totalCount'] > 0) {;
+							  		foreach($content['order'] as $order){ ?>
+									<tr>
+										<td><?=$order['maker'] ?></td>
+										<td><?=$order['makerSize'] ?></td>
+										<td><?=$order['taker'] ?></td>
+										<td><?=$order['takerSize'] ?></td>
+										<td><?=$order['updatedAt'] ?></td>
+										<td><?=$order['orderType'] ?></td>
+										<td><?=$order['status'] ?></td>
+									</tr>
+								<?php } } ?>						
+							</tbody>
+						</table>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+		<!-- /page content -->
+		</div>
+
+		<!-- footer content -->
+		<?php include('views/footer.phtml') ?>
+		<!-- /footer content -->
+		</div>
+		</div>
+
+		<!-- jQuery -->
+		<script src="assets/js/jquery.min.js"></script>
+		<!-- Bootstrap -->
+		<script src="assets/js/bootstrap.min.js"></script>
+		<!-- Datatables -->
+		<script src="assets/js/jquery.dataTables.min.js"></script>
+		<script src="assets/js/dataTables.bootstrap.min.js"></script>
+		<script src="assets/js/dataTables.buttons.min.js"></script>
+		<script src="assets/js/responsive.bootstrap.js"></script>
+
+		<!-- Custom Theme Scripts -->
+		<script src="assets/js/custom.min.js"></script>
+
+		<!-- Datatables -->
+		<script>
+	 		$(document).ready(function() {
+			$('#orders').DataTable( {
+				"paging": true,
+				"lengthChange": true,
+				"lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+				"bInfo": false,
+				"order": [[ 4, "desc" ]]
+			} );		
+	  		});
+		</script>
+		<!-- /Datatables -->
+  	</body>
+</html>

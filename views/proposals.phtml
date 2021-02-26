@@ -1,0 +1,159 @@
+		<!-- Top Info Bar -->
+		<div class="panel panel-default">  
+			<div class="panel-body">
+				<div class="row tile_count">
+					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+						<span class="count_top"><i class="far fa-paper-plane"></i> Proposals</span>
+						<div class="count"><?= $content['pCount'] ?> <small>Active</small></div>
+						<span class="count_bottom"><?= $content["passingCount"] ?> Passing</span>
+					</div>
+					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
+						<span class="count_top"><i class="fa fa-cubes"></i> Next superblock</span>
+						<div class="count"><?= $content['nextSuperblock'] ?> </div>
+						<span class="count_bottom"><small><?=$content['nextDate']?></span>
+					</div>
+					<div class="col-md-2 col-sm-6 col-xs-6 tile_stats_count">
+						<span class="count_top"><i class="fas fa-cube"></i> Total Requested </span>
+						<div class="count" style="color:<?=$content['reqColour']?>"><?= $content['budgetRequested'] ?> </div>
+						<span class="count_bottom"> 40000 BLOCK maximum</span>
+					</div>
+					<div class="col-md-2 col-sm-6 col-xs-6 tile_stats_count">
+						<span class="count_top"><i class="fas fa-cube"></i> Total Passing </span>
+						<div class="count" style="color:<?=$content['passingColour']?>"><?= $content['budgetPassing'] ?> </div>
+						<span class="count_bottom"> - </span>
+					</div>
+					<div class="col-md-2 col-sm-6 col-xs-6 tile_stats_count">
+						<span class="count_top"><i class="fas fa-cube"></i> Total Remaining </span>
+						<div class="count" style="color:<?=$content['remainingColour']?>"><?= $content['budgetRemaining'] ?> </div>
+						<span class="count_bottom"> - </span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Top Info Bar End-->
+		<div class="clearfix"></div>
+		<div class="row">
+			<div class="col-md-3 col-sm-3 col-xs-12">
+				<?php if(!empty($error)){ ?> <div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<?= $error ?> </div><?php }
+				if(!empty($message)){ ?> <div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<?= $message ?> </div><?php } ?>
+			</div>  
+		</div>
+
+		<!-- Content -->				   
+		<div class="row">
+			<!-- Proposals list -->
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="x_panel">
+					<div class="x_title">
+						<h2>Proposals<small>Blocknet Decentralised Governance System</small></h2>
+						<ul class="nav navbar-right panel_toolbox">
+							<li><a class="close-link"><i class="fa fa-times"></i></a></li>
+							<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+						</ul>
+						<div class="clearfix"></div>
+					</div>
+					<div class="x_content">
+						<table id="proposals" class="table table-striped table-bordered table-valign">
+							<thead>
+								<tr>
+							 		<th>Name</th>
+							 		<th>Amount</th>
+									<th>Description</th>
+									<th>Status</th>
+									<th>Address</th>
+									<th>Yeas</th>
+									<th>Nays</th>
+									<th>Margin</th>
+									<th>Copy Voting Commands</th>
+									<th style="width:70px;">Explore</th>
+								</tr>
+					  		</thead>
+							<tbody>
+								<?php if ($content['pCount'] > 0) {;
+							  		foreach($content['proposal'] as $proposal){ ?>
+									<tr>
+										<td><a href="<?=$proposal["URL"]?>" target="_blank"><?=$proposal['name'] ?></a></td>
+										<td><?=$proposal['amount'] ?></td>
+										<td><?=$proposal['description'] ?></td>
+										<td><?=$proposal['status'] ?></td>
+										<td><?=$proposal['address'] ?></td>
+										<td><?=$proposal['yeas'] ?></td>
+										<td><?=$proposal['nays'] ?></td>
+										<!-- <td><?=$proposal['abstains'] ?></td> -->
+										<td><?=$proposal['passingMargin'] ?></td>
+										<td><button onclick="copy('vote <?= $proposal['hash'] ?> yes')"><i class="fas fa-thumbs-up" style="color:green"></i></button>
+											<button onclick="copy('vote  <?= $proposal['hash'] ?> no')"><i class="fas fa-thumbs-down" style="color:red"></i></button>
+										</td>
+										<td>										   
+											<div class="btn-group pull-right" style="padding:5px 0 3px 0px; margin-bottom:0px">
+												<button type="button" class="btn btn-default btn-xs">Details</button>
+									  			<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													<span class="caret"></span>
+													<span class="sr-only">Toggle Dropdown</span>
+												</button>
+												<ul class="dropdown-menu">
+													<li><a href="https://chainz.cryptoid.info/block/address.dws?<?= $proposal['address'] ?>" target="_blank"><i class="fa fa-globe fa-lg" style="color:lightblue"></i> Chainz payment address</a></li>
+												</ul>
+											</div>										   
+								   		</td>										   
+									</tr>
+								<?php } } ?>						
+							</tbody>
+						</table>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+		<!-- /page content -->
+		</div>
+
+		<script>
+		function copy(text) {
+    		var input = document.createElement('input');
+    		input.setAttribute('value', text);
+    		document.body.appendChild(input);
+    		input.select();
+    		var result = document.execCommand('copy');
+			alert("Copied the text: " + text);
+			document.body.removeChild(input);
+    		//return result;
+		 }
+		</script>
+
+		<!-- footer content -->
+		<?php include('views/footer.phtml') ?>
+		<!-- /footer content -->
+		</div>
+		</div>
+
+		<!-- jQuery -->
+		<script src="assets/js/jquery.min.js"></script>
+		<!-- Bootstrap -->
+		<script src="assets/js/bootstrap.min.js"></script>
+		<!-- Datatables -->
+		<script src="assets/js/jquery.dataTables.min.js"></script>
+		<script src="assets/js/dataTables.bootstrap.min.js"></script>
+		<script src="assets/js/dataTables.buttons.min.js"></script>
+		<script src="assets/js/responsive.bootstrap.js"></script>
+
+		<!-- Custom Theme Scripts -->
+		<script src="assets/js/custom.min.js"></script>
+
+		<!-- Datatables -->
+		<script>
+	 		$(document).ready(function() {
+			$('#proposals').DataTable( {
+				"paging": true,
+				"lengthChange": true,
+				"lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+				"bInfo": false,
+				"order": [[ 0, "asc" ]]
+			} );		
+	  		});
+		</script>
+		<!-- /Datatables -->
+  	</body>
+</html>

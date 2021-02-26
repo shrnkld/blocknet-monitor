@@ -1,0 +1,19 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "push to VPS05",
+            "type": "shell",
+            "command": "scp ${relativeFile} vps05:/var/www/html/blockmonitor/${relativeFile}",
+            "problemMatcher": []
+        }
+        {
+            "label": "push to VPS07",
+            "type": "shell",
+            "command": "scp ${relativeFile} vps07:/var/www/html/blockmonitor/${relativeFile}",
+            "problemMatcher": []
+        }
+    ]
+}
