@@ -78,6 +78,15 @@ if(empty($_GET) OR $_GET['p'] == "main") {
 	}
 	$data = array('section' => 'main', 'title' => 'Home', 'content' => $content);   
    
+// New Main Page
+}elseif($_GET['p'] == "newmain") {   
+	try{
+	$content = createMainContent();
+	}catch(\Exception $e) {
+	   $error = "Node offline or incorrect RPC data";
+	}
+	$data = array('section' => 'newmain', 'title' => 'Home', 'content' => $content);   
+   
 // Peers Page   
 }elseif($_GET['p'] == "peers") {
 	

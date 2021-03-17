@@ -42,6 +42,15 @@ function createMainContent(){
 	$txoutset = $blocknetd->gettxoutsetinfo();
 	$content['issued'] = floor($txoutset['total_amount']);
 	$content['marketCap'] = round($txoutset['total_amount'] * $content['priceInfo']['BLOCK/USD'], 0);
+
+	// Open orders count
+	$openorders = $blocknetd->dxGetOrders();
+	$content['openOrders'] = count($openorders);
+
+	// Completed orders
+	$completedorders = $blocknetd->dxGetTradingData(1440);
+	$content['recentOrders'] = count($completedorders);
+
 	return $content;
 	
 }

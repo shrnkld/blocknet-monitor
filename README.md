@@ -1,18 +1,21 @@
-# Blocknet Monitor v0.1.0
+# Blocknet Monitor v0.1.1
 
 Blocknet Monitor (BPM) is a visualisation and monitoring system for the Blocknet network.
-![](assets/images/cpm_screenshot.png)
+![](assets/images/blocknetmonitor.png)
 
 
 ## Features
 
 * Extensive dashboard with general information about the node, connected peers and the blockchain
+* Overview of servicenodes
+* Overview of BlockDX open orders
+* Overview of BlockDX recently completed orders
+* Overview of active proposals in the Blocknet Decentralised Governance system
+* Overview of past proposals in the Blocknet Decentralised Governance system
 * Overview of all connected peers including country, ISP, client, traffic usage, supported services...
 * Overview of the last received blocks
 * Overview of recent orphaned blocks / alternative chains
 * Overview of the memory pool and the inflight transactions
-* Overview of servicenodes
-* Overview of active proposals in the Blocknet Decentralised Governance system
 
 
 ## Requirements

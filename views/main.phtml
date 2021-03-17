@@ -2,35 +2,48 @@
 		<div class="panel panel-default">  
 			<div class="panel-body">
 				<div class="row tile_count">
-					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-					  <span class="count_top"><i class="fas fa-user-friends"></i> Peers</span>
-					  <div class="count"><a href="?p=peers"><?= $content['node']->toConn ?></a></div>
-					  <span class="count_bottom"><span class="green" ><i class="fas fa-plus"></i><?= $content['nPeers'] ?></span> New Peers</span>
-					</div>
-					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
 					  <span class="count_top"><i class="fas fa-cube"></i> Latest Block</span>
 					  <div class="count"><a href="?p=blocks"><?= $content['node']->bHeight ?></a></div>
 					  <span class="count_bottom"><a href="?p=proposals"> Next SB: <?= $content['nextSuperblock']?></a></span>
 					</div>
-					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-					  <span class="count_top"><i class="fas fa-database"></i> TX in Mempool</span>
-					  <div class="count"><a href="?p=mempool"><?= number_format($content['node']->mempoolTx) ?></a></div>
-					  <span class="count_bottom"><i class="<?= $content['node']->mempoolUsageP['color'] ?>"><i class="fas <?= $content['node']->mempoolUsageP['icon'] ?>"></i> <?= $content['node']->mempoolUsageP['value'] ?>%</i> Usage</span>
-					</div>
-					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
 					  <span class="count_top"><i class="fas fa-sitemap"></i> Servicenodes</span>
-					  <div class="count"><a href="?p=servicenodes"><?= ($content['onlineNodes'])." <small>Online</small>"?></a></div>
-					  <span class="count_bottom"> - </span>
+					  <div class="count"><a href="?p=servicenodes"><?= $content['onlineNodes'] ?></a></div>
+					  <!--div class="count"><a href="?p=servicenodes"><?= ($content['onlineNodes'])." <small>Online</small>"?></a></div-->
+					  <span class="count_bottom"> Online </span>
 					</div>
-					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-exchange-alt"></i> BlockDX open orders</span>
+					  <div class="count"><a href="?p=openorders"><?= $content['openOrders'] ?></a></div>
+					  <span class="count_bottom"> Current </span>
+					</div>
+					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-exchange-alt"></i> BlockDX recent orders</span>
+					  <div class="count"><a href="?p=past1"><?= ($content['recentOrders'])." <small>Completed</small>" ?></a></div>
+					  <span class="count_bottom"> Last 24 hours</span>
+					</div>
+				</div>
+				<div class="row tile_count">
+				    <div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
 					  <span class="count_top">BLOCK/BTC <?= $content['priceInfo']['BLOCK/BTC'] ?> sats</span>
 					  <div class="count">$<?= $content['priceInfo']['BLOCK/USD']?></div>
 					  <span class="count_bottom">BTC $<?=$content['priceInfo']['BTC/USD'] ?></span>
 					</div>
-					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
 					  <span class="count_top"><i class="fas fa-cube"></i> Market cap</span>
 					  <div class="count"><small>$<?= $content['marketCap']?></small></div>
 					  <span class="count_bottom"><?=$content['issued'] ?> BLOCK issued</span>
+					</div>
+					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-database"></i> TX in Mempool</span>
+					  <div class="count"><a href="?p=mempool"><?= number_format($content['node']->mempoolTx) ?></a></div>
+					  <span class="count_bottom"><i class="<?= $content['node']->mempoolUsageP['color'] ?>"><i class="fas <?= $content['node']->mempoolUsageP['icon'] ?>"></i> <?= $content['node']->mempoolUsageP['value'] ?>%</i> Usage</span>
+					</div>
+					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-user-friends"></i> Peers</span>
+					  <div class="count"><a href="?p=peers"><?= $content['node']->toConn ?></a></div>
+					  <span class="count_bottom"><span class="green" ><i class="fas fa-plus"></i><?= $content['nPeers'] ?></span> New Peers</span>
 					</div>
 				</div>
 			</div>
@@ -151,7 +164,7 @@
 			
 			</div>
 			</div>
-				<div class="col-md-5 col-sm-5 col-xs-12">
+			<div class="col-md-5 col-sm-5 col-xs-12">
 			  <div class="x_panel tile fixed_height_320 overflow_hidden">
 				<div class="x_title">
 				  <h2>Peer Client Versions</h2>
