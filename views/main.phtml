@@ -27,12 +27,12 @@
 				<div class="row tile_count">
 				    <div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
 					  <span class="count_top">BLOCK/BTC <?= $content['priceInfo']['BLOCK/BTC'] ?> sats</span>
-					  <div class="count">$<?= $content['priceInfo']['BLOCK/USD']?></div>
+					  <div class="count"><a href="https://global.bittrex.com/Market/Index?MarketName=BTC-BLOCK" target="_blank">$<?= $content['priceInfo']['BLOCK/USD']?></a></div>
 					  <span class="count_bottom">BTC $<?=$content['priceInfo']['BTC/USD'] ?></span>
 					</div>
 					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
 					  <span class="count_top"><i class="fas fa-cube"></i> Market cap</span>
-					  <div class="count"><small>$<?= $content['marketCap']?></small></div>
+					  <div class="count"><a href="https://www.coingecko.com/en/coins/blocknet" target="_blank"><small>$<?= $content['marketCap']?></small></a></div>
 					  <span class="count_bottom"><?=$content['issued'] ?> BLOCK issued</span>
 					</div>
 					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
@@ -64,7 +64,7 @@
 			<div class="col-md-4 col-sm-4 col-xs-12">
 			  <div class="x_panel tile fixed_height_320">
 				<div class="x_title">
-				  <h2>Node</h2>
+				  <h2>This node Details</h2>
 				  <ul class="nav navbar-right panel_toolbox">
 					<li><a class="close-link"><i class="fas fa-times"></i></a>
 					</li>
@@ -167,7 +167,7 @@
 			<div class="col-md-5 col-sm-5 col-xs-12">
 			  <div class="x_panel tile fixed_height_320 overflow_hidden">
 				<div class="x_title">
-				  <h2>Peer Client Versions</h2>
+				  <h2>This node Peer Client Versions</h2>
 				  <ul class="nav navbar-right panel_toolbox">
 					<li><a class="close-link"><i class="fas fa-times"></i></a>
 					</li>
@@ -217,7 +217,7 @@
 			<div class="col-md-10 col-sm-10 col-xs-12">
 			  <div class="x_panel">
 				<div class="x_title">
-				  <h2>Global Peer Distribution</h2>
+				  <h2>This node Global Peer Distribution</h2>
 				  <ul class="nav navbar-right panel_toolbox">
 					<li><a class="close-link"><i class="fas fa-times"></i></a>
 					</li><li><a class="collapse-link"><i class="fas fa-chevron-up"></i></a>
