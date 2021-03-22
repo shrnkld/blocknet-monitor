@@ -10,7 +10,7 @@
 					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
 						<span class="count_top"><i class="fa fa-cubes"></i> Next superblock</span>
 						<div class="count"><?= $content['nextSuperblock'] ?> </div>
-						<span class="count_bottom"><small><?=$content['nextDate']?></span>
+						<span class="count_bottom"><small>Estimated <?=$content['nextDate']?></span>
 					</div>
 					<div class="col-md-2 col-sm-6 col-xs-6 tile_stats_count">
 						<span class="count_top"><i class="fas fa-cube"></i> Total Requested </span>
@@ -20,12 +20,12 @@
 					<div class="col-md-2 col-sm-6 col-xs-6 tile_stats_count">
 						<span class="count_top"><i class="fas fa-cube"></i> Total Passing </span>
 						<div class="count" style="color:<?=$content['passingColour']?>"><?= $content['budgetPassing'] ?> </div>
-						<span class="count_bottom"> - </span>
+						<span class="count_bottom"> BLOCK </span>
 					</div>
 					<div class="col-md-2 col-sm-6 col-xs-6 tile_stats_count">
 						<span class="count_top"><i class="fas fa-cube"></i> Total Remaining </span>
 						<div class="count" style="color:<?=$content['remainingColour']?>"><?= $content['budgetRemaining'] ?> </div>
-						<span class="count_bottom"> - </span>
+						<span class="count_bottom"> BLOCK </span>
 					</div>
 				</div>
 			</div>
@@ -48,11 +48,12 @@
 				<div class="x_panel">
 					<div class="x_title">
 						<h2>Proposals<small>Blocknet Decentralised Governance System</small></h2>
-						<ul class="nav navbar-right panel_toolbox">
-							<li><a class="close-link"><i class="fa fa-times"></i></a></li>
-							<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-						</ul>
+						
 						<div class="clearfix"></div>
+					</div>
+					<div>
+					    <p>Estimated new proposals deadline <span style="color:<?=$content['pCutoffColour']?>"><?= $content['pCutoff'] ?> </span>
+						<p>Estimated latest voting deadline <span style="color:<?=$content['vCutoffColour']?>"><?= $content['vCutoff'] ?> </span>
 					</div>
 					<div class="x_content">
 						<table id="proposals" class="table table-striped table-bordered table-valign">
@@ -107,46 +108,6 @@
 				</div>
 			</div>
 		</div>
-
-		<div class="col-md-12 col-sm-12 col-xs-12">
-			  <div class="x_panel tile fixed_height_320 overflow_hidden">
-				<div class="x_title">
-				  <h2>Proposals pie chart</h2>
-				  <ul class="nav navbar-right panel_toolbox">
-					<li><a class="close-link"><i class="fas fa-times"></i></a>
-					</li>
-					<li><a class="collapse-link"><i class="fas fa-chevron-up"></i></a>
-					</li>
-				  </ul>
-				  <div class="clearfix"></div>
-				</div>
-				<div class="x_content" style="margin:10px 0;">
-				  <table class="" style="width:100%">
-					<tr>
-					  <td  style="width:51%;">
-						<canvas id="proposals" height="240" width="240" style="margin: 0px 0px 0px 0"></canvas>
-					  </td>
-					  <td>
-						<table class="countries_list">
-						
-						<?php $i = 1;
-						foreach($content['proposal']['legend'] as $cName => $client){
-						?>
-							<tr>
-								<td><?= $i ?>. <?= $cName ?></td><td style="padding-right:0px;padding-left:0px;"><small>(<?= $client['share'] ?>%)</small></td>
-							</tr>
-						<?php 
-							$i++; 
-							} 
-						?>						 
-						</table>
-					  </td>
-					</tr>
-				  </table>
-				</div>
-			  </div>
-			</div>
-
 
 
 		<!-- /page content -->

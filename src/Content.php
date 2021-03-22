@@ -5,6 +5,8 @@ namespace App;
 function createMainContent(){
 	global $blocknetd, $trafficCIn, $trafficCOut, $newPeersCount;
 
+	date_default_timezone_set('UTC');
+
 	$blockReward = 1;
 	$blocksPerDay = 1440;
 	$poolPerDay = $blockReward*$blocksPerDay;
@@ -343,7 +345,19 @@ function createGovernanceContent(){
 	$proposals = $blocknetd->listproposals($content["nextSuperblock"]-43200+1);
 	$mnCount = $blocknetd->servicenodecount()["total"];
 	$currentBlock = $blocknetd->getblockcount();
-	$content["nextDate"] = "Estimated " . date("D j F Y H:i", time()+($content["nextSuperblock"]-$currentBlock)*60);
+	$content["nextDate"] = date("D j F Y H:iT", time()+($content["nextSuperblock"]-$currentBlock)*60);
+	$content["pCutoff"] = date("D j F Y H:iT", time()+($content["nextSuperblock"]-2880-$currentBlock)*60);
+	$content["vCutoff"] = date("D j F Y H:iT", time()+($content["nextSuperblock"]-60-$currentBlock)*60);
+	if($currentBlock > $content["nextSuperblock"] - 1440 * 2){
+		$content['pCutoffColour'] = "red";
+	}elseif($currentBlock > $content["nextSuperblock"] - 1440 * 4){
+		$content['pCutoffColour'] = "orange";
+	}else{$content['pCutoffColour'] = "green";}
+	if($currentBlock > $content["nextSuperblock"] - 60){
+		$content['vCutoffColour'] = "red";
+	}elseif($currentBlock > $content["nextSuperblock"] - 1440 * 2 - 60){
+		$content['vCutoffColour'] = "orange";
+	}else{$content['vCutoffColour'] = "green";}
 	$maxBudget = 40000;
 	$content["budgetRequested"] = 0;
 	$content["budgetPassing"] = 0;
@@ -353,31 +367,27 @@ function createGovernanceContent(){
 	$i = 0;
     foreach($proposals as $proposal){
 		$blockStart = $proposal["superblock"];
-		$blockEnd = $blockStart;
-		//if($currentBlock <= $blockEnd)
-		{
-			$content["proposal"][$i]["hash"] = $proposal["hash"];
-			$content["proposal"][$i]["name"] = $proposal["name"];
-			$content["proposal"][$i]["superblock"] = $proposal["superblock"];
-			$content["proposal"][$i]["amount"] = $proposal["amount"];
-			$content["proposal"][$i]["address"] = $proposal["address"];
-			$content["proposal"][$i]["URL"] = $proposal["url"];
-			$content["proposal"][$i]["description"] = $proposal["description"];
-			$content["proposal"][$i]["yeas"] = $proposal["votes_yes"];
-			$content["proposal"][$i]["nays"] = $proposal["votes_no"];
-			$content["proposal"][$i]["abstains"] = $proposal["votes_abstain"];
-			$content["proposal"][$i]["status"] = $proposal["status"];
-			$content["budgetRequested"] += $proposal["amount"];
-			$content["proposal"][$i]["passingMargin"] = ($proposal["votes_yes"]-$proposal["votes_no"]-$proposal["votes_abstain"]);
-			if($content["proposal"][$i]["passingMargin"] > $mnCount / 10) {
-				$content["proposal"][$i]["passing"] = "Yes";
-				$content["budgetPassing"] += $proposal["amount"];
-				$content["passingCount"] += 1;
-			}else{
-				$content["proposal"][$i]["passing"] = "No";
-			}
-			$i++;			
+		$content["proposal"][$i]["hash"] = $proposal["hash"];
+		$content["proposal"][$i]["name"] = $proposal["name"];
+		$content["proposal"][$i]["superblock"] = $proposal["superblock"];
+		$content["proposal"][$i]["amount"] = $proposal["amount"];
+		$content["proposal"][$i]["address"] = $proposal["address"];
+		$content["proposal"][$i]["URL"] = $proposal["url"];
+		$content["proposal"][$i]["description"] = $proposal["description"];
+		$content["proposal"][$i]["yeas"] = $proposal["votes_yes"];
+		$content["proposal"][$i]["nays"] = $proposal["votes_no"];
+		$content["proposal"][$i]["abstains"] = $proposal["votes_abstain"];
+		$content["proposal"][$i]["status"] = $proposal["status"];
+		$content["budgetRequested"] += $proposal["amount"];
+		$content["proposal"][$i]["passingMargin"] = ($proposal["votes_yes"]-$proposal["votes_no"]-$proposal["votes_abstain"]);
+		if($content["proposal"][$i]["passingMargin"] > $mnCount / 10) {
+			$content["proposal"][$i]["passing"] = "Yes";
+			$content["budgetPassing"] += $proposal["amount"];
+			$content["passingCount"] += 1;
+		}else{
+			$content["proposal"][$i]["passing"] = "No";
 		}
+		$i++;			
 	}
 	$content["pCount"] = $i;
 	$content["budgetRemaining"] -= $content["budgetRequested"];
@@ -410,7 +420,7 @@ function createOldGovernanceContent(){
 	$content["nextSuperblock"] = $blocknetd->nextsuperblock();
 	$proposals = $blocknetd->listproposals(1339200);
 	$currentBlock = $blocknetd->getblockcount();
-	$content["nextDate"] = "Estimated " . date("D j F Y H:i", time()+($content["nextSuperblock"]-$currentBlock)*60);
+	$content["nextDate"] = "Estimated " . date("D j F Y H:iT", time()+($content["nextSuperblock"]-$currentBlock)*60);
 	$content["budgetRequested"] = 0;
 	$content["budgetPassing"] = 0;
 	$content["pCount"] = 0;
