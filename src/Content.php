@@ -7,25 +7,14 @@ function createMainContent(){
 
 	date_default_timezone_set('UTC');
 
-	$blockReward = 1;
-	$blocksPerDay = 1440;
-	$poolPerDay = $blockReward*$blocksPerDay;
-	$mnCollateral = 5000;
-	
 	$peers = getPeerData();
 	$peerCount = count($peers);
-	$snodes = getNodesData();
-	$snodeCount = count($snodes);
-	$banListInfo = createBanListContent();
 
 	$content = [];
-	$content['bannedPeers'] = $banListInfo['totalBans'];
-	$content['last24h'] = $banListInfo['lastCount'];
 	$nodecounts = $blocknetd->servicenodecount();
 	$content['totalNodes'] = $nodecounts["total"];
 	$content['onlineNodes'] = $nodecounts["online"];
 
-	
 	$content['nextSuperblock'] = $blocknetd->nextsuperblock();
 	$content['node'] = new Node();
 	if(Config::PEERS_GEO){
@@ -105,86 +94,6 @@ function getPriceInfo(){
 	$result['BTC/USD'] = round($p2, 2);
 	$result['BLOCK/USD'] = round($p1 * $p2, 2);
 	return $result;
-}
-
-
-function createBanListContent(){
-	global $blocknetd, $error;
-
-    // Crown doesn't (yet) support listbanned RPC, fake empty result
-	//$banlist = $blocknetd->listbanned();
-    $banlist = [];
-
-	$content = [];
-	$lastCount = 0;
-	$autoCount = 0;
-	$autoPerc = 0;
-	$userCount = 0;
-	$userPerc  = 0;
-	$avgTime = 0;
-	$settCore = 0;
-
-	// Total Bans
-	$totalBans = count($banlist);
-
-	foreach($banlist as &$ban){
-		// In last 24h
-		if($ban['ban_created'] >= time()-86400){
-			$lastCount++;
-		}
-		 // Auto/User Ban Count
-		$ban['ban_reason'] = getBanReason($ban['ban_reason']);
-		if($ban['ban_reason'] == "Auto"){
-			$autoCount++;
-		}else{
-			$userCount++;
-		}
-
-		// Sum up all ban time
-		$avgTime += $ban['banned_until']-$ban['ban_created'];
-
-		// Calculate Core ban time settings (only done once)
-		if($settCore == 0){
-			if($ban['ban_reason'] == "Auto"){
-			   $settCore = (int)$ban['banned_until'] - (int)$ban['ban_created'];
-			}
-		}
-
-		$ban['ban_duration'] = round(($ban['banned_until'] - $ban['ban_created'])/86400,1);
-		$ban['ban_created'] = getDateTime($ban['ban_created']);
-		$ban['banned_until'] = getDateTime($ban['banned_until']);
-		if(!checkIpBanList($ban['address'])){
-			$error = "Invalid ban list IP";
-			return false;
-		}
-		$ban['ipv6'] = checkIfIpv6($ban['address']);
-	}
-
-	// Calculate and format average ban time
-	$content['avgTime'] = 0; // after codebase update round($avgTime/(86400*$totalBans),0);
-
-	// Calculate percentage auto/user bans
-	$content['autoCount'] = $autoCount;
-	$content['userCount'] = $userCount;
-	$content['autoPer'] = 0; // after codebase update  round($autoCount/$totalBans,2)*100;
-	$content['userPer'] = 0; // after codebase update  round($userCount/$totalBans,2)*100;
-
-	$content['totalBans'] = $totalBans;
-	$content['lastCount'] = $lastCount;
-
-	// Setting Core Setting and check if default
-	$content['settCore'] = $settCore/86400;
-	if($content['settCore'] != 1){
-		$content['settCoreMode'] = "Custom";
-	}else{
-	   $content['settCoreMode'] = "Default";
-	}
-
-	// List of all banned peers
-	$content['banList'] = $banlist;
-	
-
-	return $content;
 }
 
 function createBlocksContent(){
@@ -281,37 +190,6 @@ function createForksContent(){
 	$content["recentForks"]--;	// Don't count most recent block as a fork
 
 	return $content;
-}
-
-/**
- * @param null $editID
- * @return mixed
- */
-function createRulesContent($editID = NULL){
-
-	$rulesContent['rules'] = Rule::getRules();
-	$rulesContent['jobToken'] = substr(hash('sha256', CONFIG::PASSWORD."ebe8d532"),0,24);
-	$rulesContent['editRule'] = new Rule();
-
-	if (file_exists('data/rules.log')){
-		$log = file_get_contents('data/rules.log');
-	}else{
-		$log = "No logs available";
-	}
-	$rulesContent['log'] = $log;
-
-
-	if(!is_null($editID)){
-		$response = Rule::getByID($_GET['id']);
-		if($response != FALSE){
-			$rulesContent['editRule'] = $response;
-		// TODO: Return repsonse to controller
-		}else{
-			$error = "Couldn't find Rule!";
-		}
-	}
-
-	return $rulesContent;
 }
 
 function createMempoolContent(){
@@ -521,33 +399,4 @@ function createPastOrdersContent($days = 30){
 	return $content;
 }
 
-function createUnspentContent(){
-	global $blocknetd, $error;
-	
-	$content = [];
-	
-	try{
-		$unspents = $blocknetd->listunspent();
-	}catch(\Exception $e){
-		$error = "Wallet disabled!";
-		return "";
-	}
-	$i = 0;
-
-	foreach($unspents as $unspent){
-
-		$content["utxo"][$i]["hash"] = $unspent["txid"];
-		$content["utxo"][$i]["vout"] = $unspent["vout"];
-		$content["utxo"][$i]["address"] = $unspent["address"];
-		$content["utxo"][$i]["account"] = $unspent["account"];
-		$content["utxo"][$i]["scriptpubkey"] = $unspent["scriptPubKey"];
-		$content["utxo"][$i]["amount"] = $unspent["amount"];
-		$content["utxo"][$i]["confs"] = $unspent["confirmations"];
-		$content["utxo"][$i]["spendable"] = $unspent["spendable"];
-		$i++;
-	}
-	$content['utxoCount'] = $i;
-	$content['node'] = new Node();
-	return $content;
-}
 ?>

@@ -122,7 +122,6 @@ class Node {
 			$this->waluBal = 0; // checkInt($walletInfo["unconfirmed_balance"]);	
 			$this->waliBal = 0; // checkInt($walletInfo["immature_balance"]);	
 			$this->walTxcount = checkInt($walletInfo["txcount"]);	
-			//$this->walUnspent = checkInt($walletInfo["txcount"]);
 			$this->walActive = true;		
 		}catch(\Exception $e){
 			$this->walActive = false;
