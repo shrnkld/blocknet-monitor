@@ -9,6 +9,9 @@ error_reporting(E_ALL); // 11
 require_once 'src/Autoloader.php';
 Autoloader::register();
 
+// Set timezone
+date_default_timezone_set('UTC');
+
 // Check IP, deny access if not allowed
 if(!(empty(Config::ACCESS_IP) OR $_SERVER['REMOTE_ADDR'] == "127.0.0.1" OR $_SERVER['REMOTE_ADDR'] == "::1" OR $_SERVER['REMOTE_ADDR'] == Config::ACCESS_IP OR $_SERVER['REMOTE_ADDR'] == Config::ACCESS_IP2 OR $_SERVER['REMOTE_ADDR'] == Config::ACCESS_IP3)){
 	header('Location: login.html');
