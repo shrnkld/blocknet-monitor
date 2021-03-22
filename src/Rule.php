@@ -12,7 +12,7 @@ class Rule {
 			$this->id = $data['id'];
 		}	
 
-		$this->date = date("Y-m-d H:i:s",time());
+		$this->date = date("Y-m-d H:i:sT",time());
 		$this->uses = 0;
 
 		if(!in_array($data['action'], array('ban','disconnect','notice',), true)){
@@ -153,7 +153,7 @@ class Rule {
 					continue;
 				}
 				
-				$logTime = date("Y-m-d H:i:s",time());
+				$logTime = date("Y-m-d H:i:sT",time());
 
 				switch($rule->action) {
 					case "ban":
