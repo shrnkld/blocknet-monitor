@@ -19,9 +19,9 @@
 					  <span class="count_bottom"> Current </span>
 					</div>
 					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
-					  <span class="count_top"><i class="fas fa-exchange-alt"></i> BlockDX recent orders</span>
-					  <div class="count"><a href="?p=past1"><?= ($content['recentOrders'])." <small>Completed</small>" ?></a></div>
-					  <span class="count_bottom"> Last 24 hours</span>
+					  <span class="count_top"><i class="fas fa-exchange-alt"></i> BlockDX completed orders</span>
+					  <div class="count"><a href="?p=past1"><?= $content['recentOrders']."<small> in last day</small>" ?></a></div>
+					  <span class="count_bottom"><?= $content['alltimeOrders']." all time"?></span>
 					</div>
 				</div>
 				<div class="row tile_count">
@@ -32,7 +32,7 @@
 					</div>
 					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
 					  <span class="count_top"><i class="fas fa-cube"></i> Market cap</span>
-					  <div class="count"><a href="https://www.coingecko.com/en/coins/blocknet" target="_blank"><small>$<?= $content['marketCap']?></small></a></div>
+					  <div class="count"><a href="https://www.coingecko.com/en/coins/blocknet" target="_blank"><small>$<?= number_format($content['marketCap'])?></small></a></div>
 					  <span class="count_bottom"><?=$content['issued'] ?> BLOCK issued</span>
 					</div>
 					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">

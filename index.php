@@ -57,7 +57,7 @@ if(isset($_SESSION['login']) AND $_SESSION['login'] === TRUE){
 //	exit; 	
 }
 
-// Load ulitily and content creator functions
+// Load utility and content creator functions
 require_once 'src/Utility.php';
 require_once 'src/Content.php';
 require_once 'ccxt/ccxt.php';
@@ -70,6 +70,29 @@ $trafficCIn = 0;
 $trafficCOut = 0;
 $newPeersCount = 0;
 $blocknetd = new jsonRPCClient('http://'.Config::RPC_USER.':'.Config::RPC_PASSWORD.'@'.Config::RPC_IP.'/', Config::DEBUG);
+
+use SQLite3;
+$db = new SQLite3('data/blocknet.db');
+
+// Do some database setup
+$db->enableExceptions(true);
+
+$db->exec('CREATE TABLE IF NOT EXISTS "pastorders"(
+	"id" VARCHAR PRIMARY KEY NOT NULL,
+	"timestamp" INTEGER NOT NULL,
+	"fee_txid" VARCHAR NOT NULL,
+	"nodepubkey" VARCHAR NOT NULL,
+	"taker" VARCHAR NOT NULL,
+	"taker_size" INTEGER NOT NULL,
+	"maker" VARCHAR NOT NULL,
+	"maker_size" INTEGER NOT NULL
+)');
+
+$db->exec('CREATE TABLE IF NOT EXISTS "events"(
+	"lastorderheight" INTEGER,
+	"timestamp" INTEGER
+)');
+
 
 // Content
 // Main Page

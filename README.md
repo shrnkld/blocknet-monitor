@@ -1,4 +1,4 @@
-# Blocknet Monitor v0.1.1
+# Blocknet Monitor v0.1.2
 
 Blocknet Monitor (BPM) is a visualisation and monitoring system for the Blocknet network.
 ![](assets/images/blocknetmonitor.png)
@@ -23,9 +23,10 @@ Blocknet Monitor (BPM) is a visualisation and monitoring system for the Blocknet
 * Blocknet v4.3.1+
 * Web server (e.g. Apache, PHP built-in web server)
 * PHP 7.0.0+
-*   php-cli php-common php-curl php-fpm php-json php-mbstring php-opcache php-readline
+*   php-cli php-common php-curl php-fpm php-json php-mbstring php-opcache php-readline php-sqlite3
 * cURL
 * ccxt
+* SQLite3
 
 
 ## Installation
