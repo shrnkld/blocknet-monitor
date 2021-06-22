@@ -32,10 +32,13 @@ function createMainContent(){
 
 	// Current price info
 	$content['priceInfo'] = getPriceInfo();
-	$txoutset = $blocknetd->gettxoutsetinfo();
-	$content['issued'] = floor($txoutset['total_amount']);
-	$content['marketCap'] = round($txoutset['total_amount'] * $content['priceInfo']['BLOCK/USD'], 0);
-	
+	//$txoutset = $blocknetd->gettxoutsetinfo();
+	//$content['issued'] = floor($txoutset['total_amount']);
+	//$content['marketCap'] = round($txoutset['total_amount'] * $content['priceInfo']['BLOCK/USD'], 0);
+	$txoutset = chainzAPI("totalcoins");
+	$content['issued'] = floor($txoutset);
+	$content['marketCap'] = round($txoutset * $content['priceInfo']['BLOCK/USD'], 0);
+
 	// Open orders count
 	$openorders = $blocknetd->dxGetOrders();
 	$content['openOrders'] = count($openorders);
@@ -469,6 +472,19 @@ function createPastOrdersContent($days = 30){
     $statement->close();
 
 	return $content;
+}
+
+function chainzAPI($query){
+	// Curl
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_URL, "https://chainz.cryptoid.info/block/api.dws?q=".$query);
+	$result = json_decode(curl_exec($ch),true);
+	if(empty($result)){
+			print("Chainz API timeout ");
+			$result = [];
+	}
+	return $result;
 }
 
 ?>
