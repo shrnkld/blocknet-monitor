@@ -35,9 +35,7 @@ function createMainContent(){
 	$txoutset = $blocknetd->gettxoutsetinfo();
 	$content['issued'] = floor($txoutset['total_amount']);
 	$content['marketCap'] = round($txoutset['total_amount'] * $content['priceInfo']['BLOCK/USD'], 0);
-    //$content['issued'] = 7654321;
-	//$content['marketCap'] = $content['issued'] * $content['priceInfo']['BLOCK/USD'];
-
+	
 	// Open orders count
 	$openorders = $blocknetd->dxGetOrders();
 	$content['openOrders'] = count($openorders);
@@ -230,16 +228,16 @@ function createGovernanceContent(){
 	$content["nextDate"] = "Estimated " . date("D j F Y H:iT", time()+($content["nextSuperblock"]-$currentBlock)*60);
 	$content["pCutoff"] = "Estimated new proposals deadline: " . date("D j F Y H:iT", time()+($content["nextSuperblock"]-2880-$currentBlock)*60);
 	$content["vCutoff"] = "Estimated voting deadline: " . date("D j F Y H:iT", time()+($content["nextSuperblock"]-60-$currentBlock)*60);
-	if($currentBlock > $content["nextSuperblock"] - 1440 * 2){
+	if($currentBlock >= $content["nextSuperblock"] - 1440 * 2){
 		$content['pCutoffColour'] = "red";
 		$content["pCutoff"] = "New proposals submission window for this superblock is closed.";
-	}elseif($currentBlock > $content["nextSuperblock"] - 1440 * 4){
+	}elseif($currentBlock >= $content["nextSuperblock"] - 1440 * 4){
 		$content['pCutoffColour'] = "orange";
 	}else{$content['pCutoffColour'] = "green";}
-	if($currentBlock > $content["nextSuperblock"] - 60){
+	if($currentBlock >= $content["nextSuperblock"] - 60){
 		$content['vCutoffColour'] = "red";
 		$content['vCutoff'] = "Voting window for this superblock is closed.";
-	}elseif($currentBlock > $content["nextSuperblock"] - 1440 * 2 - 60){
+	}elseif($currentBlock >= $content["nextSuperblock"] - 1440 * 2 - 60){
 		$content['vCutoffColour'] = "orange";
 	}else{$content['vCutoffColour'] = "green";}
 	$maxBudget = 40000;
