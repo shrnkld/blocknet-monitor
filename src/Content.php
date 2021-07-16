@@ -14,8 +14,9 @@ function createMainContent(){
 
 	$content = [];
 	$nodecounts = $blocknetd->servicenodecount();
-	$content['totalNodes'] = $nodecounts["total"];
-	$content['onlineNodes'] = $nodecounts["online"];
+	$content['totalNodes'] = $nodecounts['total'];
+	$content['onlineNodes'] = $nodecounts['online'];
+	$content['xrNodes'] = count($blocknetd->xrConnectedNodes()['reply']);
 
 	$content['nextSuperblock'] = $blocknetd->nextsuperblock();
 	$content['node'] = new Node();
@@ -131,12 +132,7 @@ function createBlocksContent(){
 		$coinstakeTx = $blocknetd->getrawtransaction($block["tx"][1], 1);
 		$coinbase = $coinbaseTx["vout"][1]["value"];
 		$coinstake = $coinstakeTx["vout"][0]["value"];
-		// $superblock = $block["height"] % $sbinterval == 0;
-		// if($superblock){
-		// 	$content["blocks"][$block["height"]]["fees"] = 0;
-		// }else{
-			$content["blocks"][$block["height"]]["fees"] = round($coinbase + $coinstake, 5);
-		// }
+		$content["blocks"][$block["height"]]["fees"] = round($coinbase + $coinstake, 5);
 		$content["blocks"][$block["height"]]["fees"] = $coinbase;
 		$content["totalFees"] += $content["blocks"][$block["height"]]["fees"];
 		$content["blocks"][$block["height"]]["txcount"] = count($block["tx"]);
@@ -208,15 +204,15 @@ function createMempoolContent(){
 }
 
 function createNodesContent(){
-	global $blocknetd, $newNodesCount;
+	global $blocknetd;
 
 	$nodes = getNodesData();
 	$counts = $blocknetd->servicenodecount();
 
 	$content['nodes'] = $nodes;
-	$content['totalNodes'] = $counts["total"];
-	$content['onlineNodes'] = $counts["online"];
-	$content['nNodes'] = $newNodesCount;
+	$content['totalNodes'] = $counts['total'];
+	$content['onlineNodes'] = $counts['online'];
+	$content['xrNodes'] = count($blocknetd->xrConnectedNodes()['reply']);
 	$content['geo'] = Config::NODES_GEO;
 
 	return $content;
