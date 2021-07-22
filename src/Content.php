@@ -307,12 +307,18 @@ function createOldGovernanceContent(){
 	$content["pCount"] = 0;
 	$content["passingCount"] = 0;
 	$i = 0;
+	$lastsuperblock = 0;
     foreach($proposals as $proposal){
 		$superblock = $proposal["superblock"];
+		if($superblock != $lastsuperblock){
+			$superblockhash = $blocknetd->getblockhash($superblock);
+			$lastsuperblock = $superblock;
+		}
 		if($superblock < $currentBlock){
 			$content["proposal"][$i]["hash"] = $proposal["hash"];
 			$content["proposal"][$i]["name"] = $proposal["name"];
 			$content["proposal"][$i]["superblock"] = $proposal["superblock"];
+			$content["proposal"][$i]["superblockhash"] = $superblockhash;
 			$content["proposal"][$i]["amount"] = $proposal["amount"];
 			$content["proposal"][$i]["address"] = $proposal["address"];
 			$content["proposal"][$i]["URL"] = $proposal["url"];
