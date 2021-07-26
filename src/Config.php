@@ -7,21 +7,21 @@ class Config {
 	// Blocknet Monitor password for login. You should additionally change the name of 
     // CPM folder to something unique, if accessible via the web. You can also limit the access 
     // to a specific IP with the option below.
-	const PASSWORD = "LOGIN-PASSWORD";
+	const PASSWORD = 'LOGIN-PASSWORD';
     // IP that can can access Blocknet Monitor (by default only localhost (IPv4/v6) is allowed).
-    // If empty (""), any IP can access. If "localhost", only localhost can access. 
-    // If specific IP (e.g. "84.12.32.297"), localhost and the specific IP can access.
-	const ACCESS_IP = "localhost";	
-	const ACCESS_IP2 = "localhost";	
-	const ACCESS_IP3 = "localhost";	
+    // If empty (''), any IP can access. If 'localhost', only localhost can access. 
+    // If specific IP (e.g. '84.12.32.297'), localhost and the specific IP can access.
+	const ACCESS_IP = 'localhost';	
+	const ACCESS_IP2 = 'localhost';	
+	const ACCESS_IP3 = 'localhost';	
 	
 	
 	// IP of blocknetd RPC server. Usually localhost. Be careful with remote servers. The connection is not encrypted.
-	const RPC_IP = "127.0.0.1:41414";
+	const RPC_IP = '127.0.0.1:41414';
 	// RPC username / rpcauth specified in bitcoin.conf
-	const RPC_USER = "USERNAME";
+	const RPC_USER = 'USERNAME';
 	// RPC password / rpcauth specified in bitcoin.conf
-	const RPC_PASSWORD = "PASSWORD";
+	const RPC_PASSWORD = 'PASSWORD';
 
 	 // Debug RPC entries and exits
 	 const DEBUG = FALSE;

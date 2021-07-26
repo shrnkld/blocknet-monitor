@@ -66,7 +66,7 @@ function createPeerContent(){
 	$content['cTraf'] = round($trafficC/1000,2);
 	$content['trafcin'] = round($trafficCIn/1000,2);
 	$content['trafcout'] = round($trafficCOut/1000,2);
-	$content['tTraf'] = ($netinfo["totalbytesrecv"] + $netinfo["totalbytessent"])/1000000;
+	$content['tTraf'] = ($netinfo['totalbytesrecv'] + $netinfo['totalbytessent'])/1000000;
 	$content['cTrafP'] = round($content['cTraf']/$content['tTraf'],2)*100;
 	$content['geo'] = Config::PEERS_GEO;
 
@@ -106,10 +106,10 @@ function createBlocksContent(){
 	global $blocknetd;
 
 	$content = [];
-	$content["totalTx"] = 0;
-	$content["totalFees"] = 0;
-	$content["totalSize"] = 0;
-	$content["segwitCount"] = 0;
+	$content['totalTx'] = 0;
+	$content['totalFees'] = 0;
+	$content['totalSize'] = 0;
+	$content['segwitCount'] = 0;
 	$blocktime = 60;
 
 	$blockHash = $blocknetd->getbestblockhash();
@@ -117,35 +117,35 @@ function createBlocksContent(){
 	for($i = 0; $i < Config::DISPLAY_BLOCKS; $i++){
 		$block = $blocknetd->getblock($blockHash);
 		if($i==0){ 
-			$content["latest"] = $block["height"];
+			$content['latest'] = $block['height'];
 		}
-		$content["blocks"][$block["height"]]["hash"] = $block["hash"];
-		$content["blocks"][$block["height"]]["size"] = round($block["size"]/1000,2);
-		$content["totalSize"] += $block["size"];
-		$content["blocks"][$block["height"]]["versionhex"] = "N/A";
-		$content["blocks"][$block["height"]]["voting"] = "N/A";
-		$content["blocks"][$block["height"]]["time"] = getDateTime($block["time"]);
-		$content["blocks"][$block["height"]]["timeago"] = round((time() - $block["time"])/60);
-		$content["blocks"][$block["height"]]["coinbasetx"] = $block["tx"][0];
-		$content["blocks"][$block["height"]]["coinstaketx"] = $block["tx"][1];
-		$coinbaseTx = $blocknetd->getrawtransaction($block["tx"][0], 1);
-		$coinstakeTx = $blocknetd->getrawtransaction($block["tx"][1], 1);
-		$coinbase = $coinbaseTx["vout"][1]["value"];
-		$coinstake = $coinstakeTx["vout"][0]["value"];
-		$content["blocks"][$block["height"]]["fees"] = round($coinbase + $coinstake, 5);
-		$content["blocks"][$block["height"]]["fees"] = $coinbase;
-		$content["totalFees"] += $content["blocks"][$block["height"]]["fees"];
-		$content["blocks"][$block["height"]]["txcount"] = count($block["tx"]);
-		$content["totalTx"] += $content["blocks"][$block["height"]]["txcount"];
-		$blockHash = $block["previousblockhash"];
+		$content['blocks'][$block['height']]['hash'] = $block['hash'];
+		$content['blocks'][$block['height']]['size'] = round($block['size']/1000,2);
+		$content['totalSize'] += $block['size'];
+		$content['blocks'][$block['height']]['versionhex'] = "N/A";
+		$content['blocks'][$block['height']]['voting'] = "N/A";
+		$content['blocks'][$block['height']]['time'] = getDateTime($block['time']);
+		$content['blocks'][$block['height']]['timeago'] = round((time() - $block['time'])/60);
+		$content['blocks'][$block['height']]['coinbasetx'] = $block['tx'][0];
+		$content['blocks'][$block['height']]['coinstaketx'] = $block['tx'][1];
+		$coinbaseTx = $blocknetd->getrawtransaction($block['tx'][0], 1);
+		$coinstakeTx = $blocknetd->getrawtransaction($block['tx'][1], 1);
+		$coinbase = $coinbaseTx['vout'][1]['value'];
+		$coinstake = $coinstakeTx['vout'][0]['value'];
+		$content['blocks'][$block['height']]['fees'] = round($coinbase + $coinstake, 5);
+		$content['blocks'][$block['height']]['fees'] = $coinbase;
+		$content['totalFees'] += $content['blocks'][$block['height']]['fees'];
+		$content['blocks'][$block['height']]['txcount'] = count($block['tx']);
+		$content['totalTx'] += $content['blocks'][$block['height']]['txcount'];
+		$blockHash = $block['previousblockhash'];
 	}
-	$content["avgTxSize"] = round(($content["totalSize"]/($content["totalTx"]))/1000,2);
-	$content["avgSize"] = round($content["totalSize"]/(Config::DISPLAY_BLOCKS*1000),2);
-	$content["totalSize"] = round($content["totalSize"]/1000000,2);
-	$content["avgFee"] = round($content["totalFees"]/Config::DISPLAY_BLOCKS,2);
-	$content["totalFees"] = round($content["totalFees"],2);
-	$content["numberOfBlocks"] = Config::DISPLAY_BLOCKS;
-	$content["timeframe"] = round(end($content["blocks"])["timeago"]/$blocktime,0);
+	$content['avgTxSize'] = round(($content['totalSize']/($content['totalTx']))/1000,2);
+	$content['avgSize'] = round($content['totalSize']/(Config::DISPLAY_BLOCKS*1000),2);
+	$content['totalSize'] = round($content['totalSize']/1000000,2);
+	$content['avgFee'] = round($content['totalFees']/Config::DISPLAY_BLOCKS,2);
+	$content['totalFees'] = round($content['totalFees'],2);
+	$content['numberOfBlocks'] = Config::DISPLAY_BLOCKS;
+	$content['timeframe'] = round(end($content['blocks'])['timeago']/$blocktime,0);
 
 	return $content;
 }
@@ -153,7 +153,7 @@ function createBlocksContent(){
 function createForksContent(){
 	global $blocknetd;
 
-	$content["recentForks"] = 0;	// Count forks in last 24h
+	$content['recentForks'] = 0;	// Count forks in last 24h
 
 	$forks = $blocknetd->getchaintips();
 	$i = 0;
@@ -164,31 +164,31 @@ function createForksContent(){
 			break;
 		}
 
-		$content["blocks"][$i]["height"] = $fork["height"];
-		$content["blocks"][$i]["hash"] = $fork["hash"];
-		$content["blocks"][$i]["forklength"] = $fork["branchlen"];
-		$content["blocks"][$i]["status"] = $fork["status"];
+		$content['blocks'][$i]['height'] = $fork['height'];
+		$content['blocks'][$i]['hash'] = $fork['hash'];
+		$content['blocks'][$i]['forklength'] = $fork['branchlen'];
+		$content['blocks'][$i]['status'] = $fork['status'];
 
-		if($fork["status"] != "headers-only" AND $fork["status"] != "unknown"){
-			$block = $blocknetd->getblock($fork["hash"]);
-			$content["blocks"][$i]["size"] = round($block["size"]/1000,2);
-			//$content["blocks"][$i]["versionhex"] = $block["versionHex"];
-			//$content["blocks"][$i]["voting"] = getVoting($block["versionHex"]);
-			$content["blocks"][$i]["time"] = getDateTime($block["time"]);
-			$lastTime = $block["time"];
-			$content["blocks"][$i]["timeago"] = round((time() - $block["time"])/3600);
-			$content["blocks"][$i]["txcount"] = count($block["tx"]);
+		if($fork['status'] != "headers-only" AND $fork['status'] != "unknown"){
+			$block = $blocknetd->getblock($fork['hash']);
+			$content['blocks'][$i]['size'] = round($block['size']/1000,2);
+			//$content['blocks'][$i]['versionhex'] = $block['versionHex'];
+			//$content['blocks'][$i]['voting'] = getVoting($block['versionHex']);
+			$content['blocks'][$i]['time'] = getDateTime($block['time']);
+			$lastTime = $block['time'];
+			$content['blocks'][$i]['timeago'] = round((time() - $block['time'])/3600);
+			$content['blocks'][$i]['txcount'] = count($block['tx']);
 
-			if($content["blocks"][$i]["timeago"] <= 24){
-				$content["recentForks"]++;
+			if($content['blocks'][$i]['timeago'] <= 24){
+				$content['recentForks']++;
 			}
 		}
 		$i++;
 	}
 
-	$content["timeframe"] = round((time()-$lastTime)/3600);
-	$content["forkCount"] = Config::DISPLAY_FORKS - 1;	// Don't count most recent block as a fork
-	$content["recentForks"]--;	// Don't count most recent block as a fork
+	$content['timeframe'] = round((time()-$lastTime)/3600);
+	$content['forkCount'] = Config::DISPLAY_FORKS - 1;	// Don't count most recent block as a fork
+	$content['recentForks']--;	// Don't count most recent block as a fork
 
 	return $content;
 }
@@ -220,123 +220,123 @@ function createNodesContent(){
 
 function createGovernanceContent(){
 	global $blocknetd;
-	$content["nextSuperblock"] = $blocknetd->nextsuperblock();
-	$proposals = $blocknetd->listproposals($content["nextSuperblock"]-43200+1);
-	$mnCount = $blocknetd->servicenodecount()["total"];
+	$content['nextSuperblock'] = $blocknetd->nextsuperblock();
+	$proposals = $blocknetd->listproposals($content['nextSuperblock']-43200+1);
+	$mnCount = $blocknetd->servicenodecount()['total'];
 	$currentBlock = $blocknetd->getblockcount();
-	$content["nextDate"] = "Estimated " . date("D j F Y H:iT", time()+($content["nextSuperblock"]-$currentBlock)*60);
-	$content["pCutoff"] = "Estimated new proposals deadline: " . date("D j F Y H:iT", time()+($content["nextSuperblock"]-2880-$currentBlock)*60);
-	$content["vCutoff"] = "Estimated voting deadline: " . date("D j F Y H:iT", time()+($content["nextSuperblock"]-60-$currentBlock)*60);
-	if($currentBlock >= $content["nextSuperblock"] - 1440 * 2){
+	$content['nextDate'] = "Estimated " . date("D j F Y H:iT", time()+($content['nextSuperblock']-$currentBlock)*60);
+	$content['pCutoff'] = "Estimated new proposals deadline: " . date("D j F Y H:iT", time()+($content['nextSuperblock']-2880-$currentBlock)*60);
+	$content['vCutoff'] = "Estimated voting deadline: " . date("D j F Y H:iT", time()+($content['nextSuperblock']-60-$currentBlock)*60);
+	if($currentBlock >= $content['nextSuperblock'] - 1440 * 2){
 		$content['pCutoffColour'] = "red";
-		$content["pCutoff"] = "New proposals submission window for this superblock is closed.";
-	}elseif($currentBlock >= $content["nextSuperblock"] - 1440 * 4){
+		$content['pCutoff'] = "New proposals submission window for this superblock is closed.";
+	}elseif($currentBlock >= $content['nextSuperblock'] - 1440 * 4){
 		$content['pCutoffColour'] = "orange";
 	}else{$content['pCutoffColour'] = "green";}
-	if($currentBlock >= $content["nextSuperblock"] - 60){
+	if($currentBlock >= $content['nextSuperblock'] - 60){
 		$content['vCutoffColour'] = "red";
 		$content['vCutoff'] = "Voting window for this superblock is closed.";
-	}elseif($currentBlock >= $content["nextSuperblock"] - 1440 * 2 - 60){
+	}elseif($currentBlock >= $content['nextSuperblock'] - 1440 * 2 - 60){
 		$content['vCutoffColour'] = "orange";
 	}else{$content['vCutoffColour'] = "green";}
 	$maxBudget = 40000;
-	$content["budgetRequested"] = 0;
-	$content["budgetPassing"] = 0;
-	$content["budgetRemaining"] = $maxBudget;
-	$content["pCount"] = 0;
-	$content["passingCount"] = 0;
+	$content['budgetRequested'] = 0;
+	$content['budgetPassing'] = 0;
+	$content['budgetRemaining'] = $maxBudget;
+	$content['pCount'] = 0;
+	$content['passingCount'] = 0;
 	$i = 0;
     foreach($proposals as $proposal){
-		$blockStart = $proposal["superblock"];
-		$content["proposal"][$i]["hash"] = $proposal["hash"];
-		$content["proposal"][$i]["name"] = $proposal["name"];
-		$content["proposal"][$i]["superblock"] = $proposal["superblock"];
-		$content["proposal"][$i]["amount"] = $proposal["amount"];
-		$content["proposal"][$i]["address"] = $proposal["address"];
-		$content["proposal"][$i]["URL"] = $proposal["url"];
-		$content["proposal"][$i]["description"] = $proposal["description"];
-		$content["proposal"][$i]["yeas"] = $proposal["votes_yes"];
-		$content["proposal"][$i]["nays"] = $proposal["votes_no"];
-		$content["proposal"][$i]["abstains"] = $proposal["votes_abstain"];
-		$content["proposal"][$i]["status"] = $proposal["status"];
-		$content["budgetRequested"] += $proposal["amount"];
-		$content["proposal"][$i]["passingMargin"] = ($proposal["votes_yes"]-$proposal["votes_no"]-$proposal["votes_abstain"]);
-		if($content["proposal"][$i]["passingMargin"] > $mnCount / 10) {
-			$content["proposal"][$i]["passing"] = "Yes";
-			$content["budgetPassing"] += $proposal["amount"];
-			$content["passingCount"] += 1;
+		$blockStart = $proposal['superblock'];
+		$content['proposal'][$i]['hash'] = $proposal['hash'];
+		$content['proposal'][$i]['name'] = $proposal['name'];
+		$content['proposal'][$i]['superblock'] = $proposal['superblock'];
+		$content['proposal'][$i]['amount'] = $proposal['amount'];
+		$content['proposal'][$i]['address'] = $proposal['address'];
+		$content['proposal'][$i]['URL'] = $proposal['url'];
+		$content['proposal'][$i]['description'] = $proposal['description'];
+		$content['proposal'][$i]['yeas'] = $proposal['votes_yes'];
+		$content['proposal'][$i]['nays'] = $proposal['votes_no'];
+		$content['proposal'][$i]['abstains'] = $proposal['votes_abstain'];
+		$content['proposal'][$i]['status'] = $proposal['status'];
+		$content['budgetRequested'] += $proposal['amount'];
+		$content['proposal'][$i]['passingMargin'] = ($proposal['votes_yes']-$proposal['votes_no']-$proposal['votes_abstain']);
+		if($content['proposal'][$i]['passingMargin'] > $mnCount / 10) {
+			$content['proposal'][$i]['passing'] = "Yes";
+			$content['budgetPassing'] += $proposal['amount'];
+			$content['passingCount'] += 1;
 		}else{
-			$content["proposal"][$i]["passing"] = "No";
+			$content['proposal'][$i]['passing'] = "No";
 		}
 		$i++;			
 	}
-	$content["pCount"] = $i;
-	$content["budgetRemaining"] -= $content["budgetRequested"];
-	if($content["budgetRequested"] > $maxBudget){
-		$content["reqColour"] = "red";
-	}elseif($content["budgetRequested"] > $maxBudget * 0.9){
-		$content["reqColour"] = "orange";
+	$content['pCount'] = $i;
+	$content['budgetRemaining'] -= $content['budgetRequested'];
+	if($content['budgetRequested'] > $maxBudget){
+		$content['reqColour'] = "red";
+	}elseif($content['budgetRequested'] > $maxBudget * 0.9){
+		$content['reqColour'] = "orange";
 	}else{
-		$content["reqColour"] = "green";
+		$content['reqColour'] = "green";
 	}
-	if($content["budgetPassing"] > $maxBudget){
-		$content["passingColour"] = "red";
-	}elseif($content["budgetPassing"] > $maxBudget * 0.9){
-		$content["passingColour"] = "orange";
+	if($content['budgetPassing'] > $maxBudget){
+		$content['passingColour'] = "red";
+	}elseif($content['budgetPassing'] > $maxBudget * 0.9){
+		$content['passingColour'] = "orange";
 	}else{
-		$content["passingColour"] = "green";
+		$content['passingColour'] = "green";
 	}
-	if($content["budgetRemaining"] < 0){
-		$content["remainingColour"] = "red";
-	}elseif($content["budgetRemaining"] < $maxBudget * 0.1){
-		$content["remainingColour"] = "orange";
+	if($content['budgetRemaining'] < 0){
+		$content['remainingColour'] = "red";
+	}elseif($content['budgetRemaining'] < $maxBudget * 0.1){
+		$content['remainingColour'] = "orange";
 	}else{
-		$content["remainingColour"] = "green";
+		$content['remainingColour'] = "green";
 	}
 	return $content;
 }
 
 function createOldGovernanceContent(){
 	global $blocknetd;
-	$content["nextSuperblock"] = $blocknetd->nextsuperblock();
+	$content['nextSuperblock'] = $blocknetd->nextsuperblock();
 	$proposals = $blocknetd->listproposals(1339200);
 	$currentBlock = $blocknetd->getblockcount();
-	$content["nextDate"] = "Estimated " . date("D j F Y H:iT", time()+($content["nextSuperblock"]-$currentBlock)*60);
-	$content["budgetRequested"] = 0;
-	$content["budgetPassing"] = 0;
-	$content["pCount"] = 0;
-	$content["passingCount"] = 0;
+	$content['nextDate'] = "Estimated " . date("D j F Y H:iT", time()+($content['nextSuperblock']-$currentBlock)*60);
+	$content['budgetRequested'] = 0;
+	$content['budgetPassing'] = 0;
+	$content['pCount'] = 0;
+	$content['passingCount'] = 0;
 	$i = 0;
 	$lastsuperblock = 0;
     foreach($proposals as $proposal){
-		$superblock = $proposal["superblock"];
+		$superblock = $proposal['superblock'];
 		if($superblock != $lastsuperblock){
 			$superblockhash = $blocknetd->getblockhash($superblock);
 			$lastsuperblock = $superblock;
 		}
 		if($superblock < $currentBlock){
-			$content["proposal"][$i]["hash"] = $proposal["hash"];
-			$content["proposal"][$i]["name"] = $proposal["name"];
-			$content["proposal"][$i]["superblock"] = $proposal["superblock"];
-			$content["proposal"][$i]["superblockhash"] = $superblockhash;
-			$content["proposal"][$i]["amount"] = $proposal["amount"];
-			$content["proposal"][$i]["address"] = $proposal["address"];
-			$content["proposal"][$i]["URL"] = $proposal["url"];
-			$content["proposal"][$i]["description"] = $proposal["description"];
-			$content["proposal"][$i]["yeas"] = $proposal["votes_yes"];
-			$content["proposal"][$i]["nays"] = $proposal["votes_no"];
-			$content["proposal"][$i]["abstains"] = $proposal["votes_abstain"];
-			$content["proposal"][$i]["status"] = $proposal["status"];
-			$content["budgetRequested"] += $proposal["amount"];
-			$content["proposal"][$i]["passingMargin"] = ($proposal["votes_yes"]-$proposal["votes_no"]-$proposal["votes_abstain"]);
-			if($proposal["status"] == "passed") {
-				$content["budgetPassing"] += $proposal["amount"];
-				$content["passingCount"] += 1;
+			$content['proposal'][$i]['hash'] = $proposal['hash'];
+			$content['proposal'][$i]['name'] = $proposal['name'];
+			$content['proposal'][$i]['superblock'] = $proposal['superblock'];
+			$content['proposal'][$i]['superblockhash'] = $superblockhash;
+			$content['proposal'][$i]['amount'] = $proposal['amount'];
+			$content['proposal'][$i]['address'] = $proposal['address'];
+			$content['proposal'][$i]['URL'] = $proposal['url'];
+			$content['proposal'][$i]['description'] = $proposal['description'];
+			$content['proposal'][$i]['yeas'] = $proposal['votes_yes'];
+			$content['proposal'][$i]['nays'] = $proposal['votes_no'];
+			$content['proposal'][$i]['abstains'] = $proposal['votes_abstain'];
+			$content['proposal'][$i]['status'] = $proposal['status'];
+			$content['budgetRequested'] += $proposal['amount'];
+			$content['proposal'][$i]['passingMargin'] = ($proposal['votes_yes']-$proposal['votes_no']-$proposal['votes_abstain']);
+			if($proposal['status'] == "passed") {
+				$content['budgetPassing'] += $proposal['amount'];
+				$content['passingCount'] += 1;
 			}
 			$i++;			
 		}
 	}
-	$content["pCount"] = $i;
+	$content['pCount'] = $i;
 	return $content;
 }
 
@@ -361,38 +361,38 @@ function createOpenOrdersContent(){
 	//}
 	
 	$content = [];
-	$content["openOrderCount"] = 0;
-	$content["rolledBackCount"] = 0;
-	$content["otherCount"] = 0;
-	$content["totalCount"] = 0;
+	$content['openOrderCount'] = 0;
+	$content['rolledBackCount'] = 0;
+	$content['otherCount'] = 0;
+	$content['totalCount'] = 0;
 
 	$openorders = $blocknetd->dxGetOrders();
 	$i = 0;
 	foreach($openorders as $order){
-		$content["order"][$i]["id"] = $order["id"];
-		$content["order"][$i]["maker"] = $order["maker"];
-		$content["order"][$i]["makerSize"] = $order["maker_size"];
-		$content["order"][$i]["taker"] = $order["taker"];
-		$content["order"][$i]["takerSize"] = $order["taker_size"];
-		$content["order"][$i]["updatedAt"] = $order["updated_at"];
-		$content["order"][$i]["createdAt"] = $order["created_at"];
-		$content["order"][$i]["orderType"] = $order["order_type"];
-		$content["order"][$i]["partialMinimum"] = $order["partial_minimum"];
-		$content["order"][$i]["partialOMS"] = $order["partial_orig_maker_size"];
-		$content["order"][$i]["partialOTS"] = $order["partial_orig_taker_size"];
-		$content["order"][$i]["partialRepost"] = $order["partial_repost"];
-		$content["order"][$i]["partialParentId"] = $order["partial_parent_id"];
-		$content["order"][$i]["status"] = $order["status"];
-		if($order["status"] == "open"){
-			$content["openOrderCount"]++;
-		}elseif($order["status"] == "rolled_back"){
-			$content["rolledBackCount"]++;
+		$content['order'][$i]['id'] = $order['id'];
+		$content['order'][$i]['maker'] = $order['maker'];
+		$content['order'][$i]['makerSize'] = $order['maker_size'];
+		$content['order'][$i]['taker'] = $order['taker'];
+		$content['order'][$i]['takerSize'] = $order['taker_size'];
+		$content['order'][$i]['updatedAt'] = $order['updated_at'];
+		$content['order'][$i]['createdAt'] = $order['created_at'];
+		$content['order'][$i]['orderType'] = $order['order_type'];
+		$content['order'][$i]['partialMinimum'] = $order['partial_minimum'];
+		$content['order'][$i]['partialOMS'] = $order['partial_orig_maker_size'];
+		$content['order'][$i]['partialOTS'] = $order['partial_orig_taker_size'];
+		$content['order'][$i]['partialRepost'] = $order['partial_repost'];
+		$content['order'][$i]['partialParentId'] = $order['partial_parent_id'];
+		$content['order'][$i]['status'] = $order['status'];
+		if($order['status'] == "open"){
+			$content['openOrderCount']++;
+		}elseif($order['status'] == "rolled_back"){
+			$content['rolledBackCount']++;
 		}else{
-			$content["otherCount"]++;
+			$content['otherCount']++;
 		}
 		$i++;
 	}
-	$content["totalCount"] = $i;
+	$content['totalCount'] = $i;
 	$content['blocknetd'] = $blocknetd;
     return $content;
 }
@@ -427,7 +427,7 @@ function updatePastOrders() {
             $statement->bindValue(':maker_size', $order['maker_size']);
             try {
                 $statement->execute();
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 //print("Insert failed with " .$e->GetMessage()."\n");
                 //$j++;
             }
@@ -449,27 +449,27 @@ function createPastOrdersContent($days = 30){
 	updatePastOrders();
 
 	$content = [];
-	$content["days"] = $days;
-	$content["pastOrderCount"] = 0;
+	$content['days'] = $days;
+	$content['pastOrderCount'] = 0;
 	$blocks = $days * 1440;
-	$content["blocks"] = $blocks;
+	$content['blocks'] = $blocks;
 
     $statement = $db->prepare('SELECT * FROM "pastorders" WHERE "timestamp" >= :since');
     $statement->bindValue(':since', time() - $days * 86400);
     $result = $statement->execute();
 	$i = 0;
     while ($order = $result->fetchArray()) {
-		$content["order"][$i]["time"] = getDateTime($order["timestamp"]);
-		$content["order"][$i]["txid"] = $order["fee_txid"];
-		$content["order"][$i]["snodekey"] = $order["nodepubkey"];
-		$content["order"][$i]["xid"] = $order["id"];
-		$content["order"][$i]["taker"] = $order["taker"];
-		$content["order"][$i]["takerAmount"] = $order["taker_size"];
-		$content["order"][$i]["maker"] = $order["maker"];
-		$content["order"][$i]["makerAmount"] = $order["maker_size"];
+		$content['order'][$i]['time'] = getDateTime($order['timestamp']);
+		$content['order'][$i]['txid'] = $order['fee_txid'];
+		$content['order'][$i]['snodekey'] = $order['nodepubkey'];
+		$content['order'][$i]['xid'] = $order['id'];
+		$content['order'][$i]['taker'] = $order['taker'];
+		$content['order'][$i]['takerAmount'] = $order['taker_size'];
+		$content['order'][$i]['maker'] = $order['maker'];
+		$content['order'][$i]['makerAmount'] = $order['maker_size'];
 		$i++;
 	}
-	$content["pastOrderCount"] = $i;
+	$content['pastOrderCount'] = $i;
 	$result->finalize();
     $statement->close();
 

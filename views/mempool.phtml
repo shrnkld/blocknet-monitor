@@ -56,7 +56,7 @@
 										<td><?= date("Y-m-d H:i:sT", $tx['time']) ?></td>   
 										<td><?= $tx['size'] ?></td>
 										<td><?= sprintf('%.8F', $tx['fee']) ?></td>
-										<td><?= sprintf('%.8F', round((1000/$tx["size"])*$tx["fee"], 8)) ?></td>
+										<td><?= sprintf('%.8F', round((1000/$tx['size'])*$tx['fee'], 8)) ?></td>
 										<!-- <td><?= $tx['descendantcount'] ?></td> -->										
 										<td> 
 											<div class="btn-group pull-left" style="padding:5px 0 3px 7px; margin-bottom:0px">

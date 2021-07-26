@@ -5,7 +5,7 @@
 					<div class="col-md-3 col-sm-6 col-xs-6 tile_stats_count">
 						<span class="count_top"><i class="far fa-paper-plane"></i> Past proposals</span>
 						<div class="count"><?= $content['pCount'] ?> <small>On-chain</small></div>
-						<span class="count_bottom"><?= $content["passingCount"] ?> Passed</span>
+						<span class="count_bottom"><?= $content['passingCount'] ?> Passed</span>
 					</div>
 					<div class="col-md-3 col-sm-6 col-xs-6 tile_stats_count">
 						<span class="count_top"><i class="fa fa-cubes"></i> Next superblock</span>
@@ -65,7 +65,7 @@
 								<?php $i = 0;
 							  		foreach($content['proposal'] as $proposal){ ?>
 									<tr>
-										<td><a href="<?=$proposal["URL"]?>" target="_blank"><?=$proposal['name'] ?></a></td>
+										<td><a href="<?=$proposal['URL']?>" target="_blank"><?=$proposal['name'] ?></a></td>
 										<td><?=$proposal['superblock'] ?></td>
 										<td><?=$proposal['amount'] ?></td>
 										<td><?=$proposal['description'] ?></td>

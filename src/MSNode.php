@@ -21,16 +21,16 @@ class MSNode{
 	public $hosted; // bool
 	
 	function __construct($msNode) {
-		$this->id = $msNode["id"];
-		$this->IP = $msNode["IP"];
-		$this->type = $msNode["type"];
-		$this->txid = $msNode["txid"];
-		$this->status = $msNode["status"];
-		$this->protocol = $msNode["protocol"];
-		$this->address = $msNode["address"];
-		$this->lastSeen = $msNode["lastseen"];
-		$this->timeActive = $msNode["activetime"];
-		$this->lastPaid = $msNode["lastpaid"];
+		$this->id = $msNode['id'];
+		$this->IP = $msNode['IP'];
+		$this->type = $msNode['type'];
+		$this->txid = $msNode['txid'];
+		$this->status = $msNode['status'];
+		$this->protocol = $msNode['protocol'];
+		$this->address = $msNode['address'];
+		$this->lastSeen = $msNode['lastseen'];
+		$this->timeActive = $msNode['activetime'];
+		$this->lastPaid = $msNode['lastpaid'];
 //		$this->country = "UN";
 //		$this->countryCode = "Unknown";
 //		$this->region = "Unknown";
