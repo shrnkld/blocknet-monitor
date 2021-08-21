@@ -10,7 +10,7 @@
 
 	<title><?=$title?> - Blocknet Monitor</title>
 
-	<link href="assets/images/favicon.ico" rel="icon">
+	<link href="assets/images/favicon.ico?ver=0001" rel="icon">
 
 	<!-- Bootstrap -->
 	<link href="assets/css/bootstrap.css" rel="stylesheet">
@@ -60,6 +60,7 @@
 						<li <?php if($this->section=="past14") echo 'class="active"'; ?>><a href="?p=past14">14 days</a></li>
 						<li <?php if($this->section=="past30") echo 'class="active"'; ?>><a href="?p=past30">30 days</a></li>
 					</ul>
+					<a href="?p=defi" <?php if($this->section=="defi") echo 'class="active"'; ?>><i class="fas fa-magic"></i> DeFi </a>
 					<a href="?p=peers" <?php if($this->section=="peers") echo 'class="active"'; ?>><i class="fas fa-user-friends"></i> Peers </a>
 					<a href="?p=blocks" <?php if($this->section=="blocks") echo 'class="active"'; ?>><i class="fas fa-cube"></i> Blocks</a>
 					<ul class="nav child_menu" style="display: block;">
