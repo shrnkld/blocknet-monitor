@@ -1,4 +1,4 @@
-# Blocknet Monitor v0.1.2
+# Blocknet Monitor v0.2.0
 
 Blocknet Monitor (BPM) is a visualisation and monitoring system for the Blocknet network.
 ![](assets/images/blocknetmonitor.png)

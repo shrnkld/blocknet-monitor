@@ -90,8 +90,31 @@ $db->exec('CREATE TABLE IF NOT EXISTS "pastorders"(
 
 $db->exec('CREATE TABLE IF NOT EXISTS "events"(
 	"lastorderheight" INTEGER,
+	"lastproposal" INTEGER,
 	"timestamp" INTEGER
 )');
+
+$db->exec('CREATE TABLE IF NOT EXISTS "pastproposals"(
+	"hash" VARCHAR PRIMARY KEY NOT NULL,
+	"name" VARCHAR NOT NULL,
+	"superblock" INTEGER NOT NULL,
+	"amount" INTEGER NOT NULL,
+	"address" VARCHAR NOT NULL,
+	"url" VARCHAR NOT NULL,
+	"description" VARCHAR,
+	"yeas" INTEGER NOT NULL,
+	"nays" INTEGER NOT NULL,
+	"abstains" INTEGER NOT NULL,
+	"status" VARCHAR NOT NULL
+)');
+
+$db->exec('CREATE TABLE IF NOT EXISTS "scratch"(
+   "superblock" VARCHAR NOT NULL,
+   "txid" VARCHAR NOT NULL,
+   "amount" INTEGER NOT NULL,
+   "address" VARCHAR NOT NULL
+)');
+
 
 
 // Content
@@ -137,8 +160,13 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
  
 // Servicenodes Page
 }elseif($_GET['p'] == 'servicenodes') {
-	$content = createNodesContent();
+	$content = createSNodesContent();
 	$data = array('section' => 'servicenodes', 'title' => 'Servicenodes', 'content' => $content);  
+ 
+// Servicenode details Page
+}elseif($_GET['p'] == 'servicenodedetail') {
+	$content = fetchNodeDetails($_GET['nodepubkey']);
+	$data = array('section' => 'servicenodedetail', 'title' => 'Servicenode Details', 'content' => $content);  
  
 // Proposals Page
 }elseif($_GET['p'] == 'proposals') {
@@ -147,7 +175,7 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
 
 // Past proposals Page
 }elseif($_GET['p'] == 'pastproposals') {
-	$content = createOldGovernanceContent();
+	$content = createPastProposalsContent();
 	$data = array('section' => 'pastproposals', 'title' => 'Past Proposals', 'content' => $content);
 
 // Blocks Page 
@@ -160,30 +188,70 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
 	$content= createForksContent();
 	$data = array('section' => 'forks', 'title' => 'Forks', 'content' => $content);
   
+// DeFi Page 
+}elseif($_GET['p'] == 'defi') {
+	$content = createDeFiContent();
+	$data = array('section' => 'defi', 'title' => 'DeFi', 'content' => $content);
+  
 // Open Orders Page 
 }elseif($_GET['p'] == 'openorders') {
 	$content= createOpenOrdersContent();
 	$data = array('section' => 'openorders', 'title' => 'Open Orders', 'content' => $content);
   
 // Past Orders Page 
-}elseif($_GET['p'] == 'past1') {
-	$content= createPastOrdersContent(1);
+}elseif($_GET['p'] == 'pastorders') {
+	$days = 1;
+	$maker = '';
+	$taker = '';
+	$snode = '';
+	if(isset($_GET['days'])){
+		$days = $_GET['days'];
+	}
+	if(isset($_GET['maker'])){
+		$maker = $_GET['maker'];
+	}
+	if(isset($_GET['taker'])){
+		$taker = $_GET['taker'];
+	}
+	if(isset($_GET['snode'])){
+		$snode = $_GET['snode'];
+	}
+	$content= createPastOrdersContent($days, $maker, $taker, $snode);
 	$data = array('section' => 'pastorders', 'title' => 'Past Orders', 'content' => $content);
   
-// Past Orders Page 
-}elseif($_GET['p'] == 'past7') {
-	$content= createPastOrdersContent(7);
-	$data = array('section' => 'pastorders', 'title' => 'Past Orders', 'content' => $content);
+// SPV Wallets Page 
+}elseif($_GET['p'] == 'dxwallets') {
+	$content= createDxWallets();
+	$data = array('section' => 'dxwallets', 'title' => 'DX Wallets', 'content' => $content);
   
-// Past Orders Page 
-}elseif($_GET['p'] == 'past14') {
-	$content= createPastOrdersContent(14);
-	$data = array('section' => 'pastorders', 'title' => 'Past Orders', 'content' => $content);
+// XRouter services Page 
+}elseif($_GET['p'] == 'xrservices') {
+	$content= createXrServices();
+	$data = array('section' => 'xrservices', 'title' => 'XRouter Services', 'content' => $content);
+  
+// XCloud services Page 
+}elseif($_GET['p'] == 'xcservices') {
+	$content= createXcServices();
+	$data = array('section' => 'xcservices', 'title' => 'XCloud Services', 'content' => $content);
+
+	// Trades and fees Page 
+}elseif($_GET['p'] == 'tradesfees') {
+	$days = '';
+	if(isset($_GET['days'])){
+		$days = $_GET['days'];
+	}
+	$content= createTradesAndFees($days);
+	$data = array('section' => 'tradesfees', 'title' => 'Trades and Fees', 'content' => $content);
   
 // Past Orders Page 
 }elseif($_GET['p'] == 'past30') {
 	$content= createPastOrdersContent(30);
 	$data = array('section' => 'pastorders', 'title' => 'Past Orders', 'content' => $content);
+  
+// Database update Page 
+}elseif($_GET['p'] == 'dbupdate') {
+	$content= dbupdate(1);
+	$data = array('section' => 'dbupdate', 'title' => 'DB Update', 'content' => $content);
   
 // Settings Page	
 }elseif($_GET['p'] == 'settings') {
@@ -212,7 +280,8 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
 
 // About Page	
 }elseif($_GET['p'] == 'about') {
-	$data = array('section' => 'about', 'title' => 'About'); 
+	$content= dbupdate();
+	$data = array('section' => 'about', 'title' => 'About', 'content' => $content); 
 	
 }else{
 	header('Location: index.php');

@@ -4,23 +4,23 @@
 				<div class="row tile_count">
 					<div class="col-md-3 col-sm-6 col-xs-6 tile_stats_count">
 						<span class="count_top"><i class="far fa-paper-plane"></i> Past proposals</span>
-						<div class="count"><?= $content['pCount'] ?> <small>On-chain</small></div>
-						<span class="count_bottom"><?= $content['passingCount'] ?> Passed</span>
+						<div class="count"><?= $content['budgetRequested'] ?> <small>BLOCK requested</small></div>
+						<span class="count_bottom"><?= $content['pCount'] ?> on-chain proposals</span>
 					</div>
 					<div class="col-md-3 col-sm-6 col-xs-6 tile_stats_count">
-						<span class="count_top"><i class="fa fa-cubes"></i> Next superblock</span>
-						<div class="count"><?= $content['nextSuperblock'] ?> </div>
-						<span class="count_bottom"><small><?=$content['nextDate']?></span>
+						<span class="count_top"><i class="fas fa-cube"></i> Passed and paid </span>
+						<div class="count"><?= $content['budgetPaid'] ?> <small>BLOCK</small></div>
+						<span class="count_bottom"><?= $content['paidCount'] ?> proposals</span>
 					</div>
 					<div class="col-md-3 col-sm-6 col-xs-6 tile_stats_count">
-						<span class="count_top"><i class="fas fa-cube"></i> Total Requested </span>
-						<div class="count"><?= $content['budgetRequested'] ?> <small>BLOCK</small></div>
-						<span class="count_bottom"> in on-chain proposals </span>
+						<span class="count_top"><i class="fas fa-cube"></i> Passed but not paid </span>
+						<div class="count"><?= $content['budgetNotPaid'] ?> <small>BLOCK</small></div>
+						<span class="count_bottom"><?= $content['notPaidCount'] ?> proposals</span>
 					</div>
 					<div class="col-md-3 col-sm-6 col-xs-6 tile_stats_count">
-						<span class="count_top"><i class="fas fa-cube"></i> Total Passed </span>
-						<div class="count"><?= $content['budgetPassing'] ?> <small>BLOCK</small></div>
-						<span class="count_bottom"> in on-chain proposals </span>
+						<span class="count_top"><i class="fas fa-cube"></i> Failed </span>
+						<div class="count"><?= $content['budgetFailed'] ?> <small>BLOCK</small></div>
+						<span class="count_bottom"><?= $content['failedCount'] ?> proposals</span>
 					</div>
 				</div>
 			</div>
@@ -37,7 +37,7 @@
 		</div>
 
 		<!-- Content -->				   
-		<div class="row">
+		<div class="row"> <!--small-->
 			<!-- Proposals list -->
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="x_panel">
