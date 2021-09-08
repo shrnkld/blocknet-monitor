@@ -2,9 +2,14 @@
 		<div class="panel panel-default">  
 			<div class="panel-body">
 				<div class="row tile_count">
-					<div class="col-md-12 col-sm-12 col-xs-12 tile_stats_count">
-						<span class="count_top"><i class="fas fa-exchange-alt"></i> BlockDX tradeable wallets</span>
-						<div class="count"><?= $content['wCount'] ?> <small> Distinct coins available to trade</small></div>
+					<div class="col-md-6 col-sm-12 col-xs-12 tile_stats_count">
+						<span class="count_top"><i class="fas fa-exchange-alt"></i> BlockDX tradeable coins</span>
+						<div class="count"><?= $content['dxCount'] ?> <small> available to trade</small></div>
+						<span class="count_bottom"> </span>
+					</div>
+					<div class="col-md-6 col-sm-12 col-xs-12 tile_stats_count">
+						<span class="count_top"><i class="fas fa-exchange-alt"></i> BlockDX XRouter coins</span>
+						<div class="count"><?= $content['spvCount'] ?> <small> available for XRouter calls</small></div>
 						<span class="count_bottom"> </span>
 					</div>
 				</div>
@@ -23,11 +28,11 @@
 
 		<!-- Content -->				   
 		<div class="row">
-			<!-- Open orders list -->
+			<!-- DX and SPV wallets -->
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="x_panel">
 					<div class="x_title">
-						<h2>Coins available to trade </small></h2>
+						<h2>Coins</small></h2>
 						<div class="clearfix"></div>
 					</div>
 					<div class="x_content">
@@ -35,16 +40,18 @@
 							<thead>
 								<tr>
 							 		<th>Coin</th>
-									<th>Servicenodes</th>
+									<th>Trading servicenodes</th>
+									<th>XRouter servicenodes</th>
 									<th>More</th>
 								</tr>
 					  		</thead>
 							<tbody>
-								<?php if ($content['wCount'] > 0) {;
-							  		foreach($content['wallets'] as $row){ ?>
+								<?php if ($content['dxCount'] + $content['spvCount'] > 0) {;
+							  		foreach($content['wallets'] as $coin => $counts){ ?>
 									<tr>
-										<td><?=$row['coin'] ?></td>
-										<td><?=$row['wallets'] ?></td>
+										<td><?=$coin ?></td>
+										<td><?=$counts['dx'] ?></td>
+										<td><?=$counts['spv'] ?></td>
 										<td>										   
 											<div class="btn-group pull-right" style="padding:5px 0px 3px 0px; margin-bottom:0px">
 												<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -52,15 +59,10 @@
 													<span class="sr-only">Toggle Dropdown</span>
 												</button>
 												<ul class="dropdown-menu">
-												    <li><a href="?p=tradesfees&days=1" target="_self">1 day</a></li>
-												    <li><a href="?p=tradesfees&days=7" target="_self">7 days</a></li>
-												    <li><a href="?p=tradesfees&days=14" target="_self">14 days</a></li>
-												    <li><a href="?p=tradesfees&days=30" target="_self">30 days</a></li>
-												    <li><a href="?p=tradesfees" target="_self">All time</a></li>
-													<li class="divider"></li>
 												    <li><a href="?p=pastorders&days=30&snode=<?= $row['servicenode'] ?>" target="_self">30 days trades</a></li>
+												    <li><a href="?p=tradesfees&days=30" target="_self">30 days stats</a></li>
 													<li class="divider"></li>
-													<li><a href="https://chainz.cryptoid.info/block/address.dws?<?= $row['servicenode'] ?>" target="_blank"><i class="fa fa-globe fa-lg" style="color:lightblue"></i> Chainz</a></li>
+												    <li><a href="?p=xrservices&coin=<?=$coin?>" target="_self">XRservices</a></li>
 												</ul>
 											</div>										   
 								   		</td>

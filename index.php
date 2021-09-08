@@ -226,12 +226,32 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
   
 // XRouter services Page 
 }elseif($_GET['p'] == 'xrservices') {
-	$content= createXrServices();
+	$service = '';
+	$coin = '';
+	$snode = '';
+	if(isset($_GET['service'])){
+		$service = $_GET['service'];
+	}
+	if(isset($_GET['coin'])){
+		$coin = $_GET['coin'];
+	}
+	if(isset($_GET['snode'])){
+		$snode = $_GET['snode'];
+	}
+	$content= createXrServices($snode, $coin, $service);
 	$data = array('section' => 'xrservices', 'title' => 'XRouter Services', 'content' => $content);
   
 // XCloud services Page 
 }elseif($_GET['p'] == 'xcservices') {
-	$content= createXcServices();
+	$service = '';
+	$snode = '';
+	if(isset($_GET['service'])){
+		$service = $_GET['service'];
+	}
+	if(isset($_GET['snode'])){
+		$snode = $_GET['snode'];
+	}
+	$content= createXcServices($snode, $service);
 	$data = array('section' => 'xcservices', 'title' => 'XCloud Services', 'content' => $content);
 
 	// Trades and fees Page 

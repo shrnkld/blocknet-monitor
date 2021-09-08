@@ -27,7 +27,7 @@
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="x_panel">
 					<div class="x_title">
-						<h2>XRouter services<small> </small></h2>
+						<h2>XRouter services<small> (showing <?= $content['request'] ?>)</small></h2>
 						<div class="clearfix"></div>
 					</div>
 					<div class="x_content">
@@ -64,15 +64,11 @@
 													<span class="sr-only">Toggle Dropdown</span>
 												</button>
 												<ul class="dropdown-menu">
-												    <li><a href="?p=tradesfees&days=1" target="_self">1 day</a></li>
-												    <li><a href="?p=tradesfees&days=7" target="_self">7 days</a></li>
-												    <li><a href="?p=tradesfees&days=14" target="_self">14 days</a></li>
-												    <li><a href="?p=tradesfees&days=30" target="_self">30 days</a></li>
-												    <li><a href="?p=tradesfees" target="_self">All time</a></li>
+												    <li><a href="?p=xrservices&snode=<?=$service['nodepubkey']?>" target="_self">This node</a></li>
+												    <li><a href="?p=xrservices&coin=<?=$service['coin']?>" target="_self">This coin</a></li>
+												    <li><a href="?p=xrservices&service=<?=$service['xrservice']?>" target="_self">This service</a></li>
 													<li class="divider"></li>
-												    <li><a href="?p=pastorders&days=30&snode=<?= $row['servicenode'] ?>" target="_self">30 days trades</a></li>
-													<li class="divider"></li>
-													<li><a href="https://chainz.cryptoid.info/block/address.dws?<?= $row['servicenode'] ?>" target="_blank"><i class="fa fa-globe fa-lg" style="color:lightblue"></i> Chainz</a></li>
+													<li><a href="https://chainz.cryptoid.info/block/address.dws?<?= $service['payment_address'] ?>" target="_blank"><i class="fa fa-globe fa-lg" style="color:lightblue"></i> Chainz</a></li>
 												</ul>
 											</div>										   
 								   		</td>

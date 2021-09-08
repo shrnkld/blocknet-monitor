@@ -423,7 +423,7 @@ function updateSnodesContent(){
 			$statement2->bindValue(':nodepubkey', $node['nodepubkey']);
 			$statement2->bindValue(':coin', trim($onespv['spvwallet']));
 			foreach($onespv['commands'] as $command){
-				if($command != "xrGetConfig"){ 
+				if($command['command'] != "xrGetConfig"){ 
 					$statement2->bindValue(':xrservice', $command['command']);
 					$statement2->bindValue(':fee', $command['fee']);
 					$statement2->bindValue(':paymentaddress', $command['paymentaddress']);
@@ -479,82 +479,120 @@ function createSNodesContent(){
 	$content['onlineNodes'] = $online;
 	$content['exrNodes'] = $exr;
 	$content['xrNodes'] = count($blocknetd->xrConnectedNodes()['reply']);
-    $content['geo'] = FALSE;
 
     return $content;
 }
 
-function createXcServices($servicenode = ''){
+function createXcServices($snode = '', $service = ''){
 	global $blocknetd, $db;
 	updateSnodesContent();
 
-	if($servicenode == ''){
-	    $statement1 = $db->prepare('SELECT * FROM "xcservices" ORDER BY "timelastseen" DESC');
+	$content['request'] = '';
+	if($snode.$service == ''){
+		$statement1 = $db->prepare('SELECT * FROM "xcservices" ORDER BY "timelastseen" DESC');
+		$content['request'] = 'All services on all nodes.';
 	}else{
-		$statement1 = $db->prepare('SELECT * FROM "xcservices" WHERE ORDER BY "timelastseen" DESC');
+	    $query = 'SELECT * FROM "xcservices" WHERE 1=1';
+	    if($snode != ''){
+			$query .= ' AND "nodepubkey" = :snode';
+			$content['request'] .= 'servicenode='.$snode;
+		}
+	    if($service != ''){
+			$query .= ' AND "xcservice" = :service';
+			$content['request'] .= ' service='.$service;
+		}
+		$query .= ' ORDER BY "timelastseen" DESC';
+		//print($query);
+	    $statement1 = $db->prepare($query);
+		$statement1->bindValue(':snode', $snode);
+		$statement1->bindValue(':service', $service);
 	}
-
 	$XCservices = $statement1->execute();
+
 	$services = [];
-	$exr = 0;
-	$online = 0;
 
     while ($service = $XCservices->fetchArray())
     {
-		//$snodeObj = new SNode($snode);
 		$services[] = $service;
-		//$exr += (int)($snodeObj->exr == 1);
-		//$online += (int)($snodeObj->status == 'running');
 	}
 	$content['services'] = $services;
 	$content['servicesCount'] = count($services);
-	//$content['onlineNodes'] = $online;
-	//$content['exrNodes'] = $exr;
-	//$content['xrNodes'] = count($blocknetd->xrConnectedNodes()['reply']);
-    //$content['geo'] = FALSE;
 
     return $content;
 }
 
-function createXrServices(){
-	global $blocknetd, $db;
+function createXrServices($snode = '', $coin = '', $service = ''){
+	global $db;
 	updateSnodesContent();
 
-	$statement1 = $db->prepare('SELECT * FROM "xrservices" ORDER BY "timelastseen" DESC');
+	$content['request'] = '';
+	if($snode.$coin.$service == ''){
+		$statement1 = $db->prepare('SELECT * FROM "xrservices" ORDER BY "timelastseen" DESC');
+		$content['request'] = 'All services on all nodes.';
+	}else{
+	    $query = 'SELECT * FROM "xrservices" WHERE 1=1';
+	    if($snode != ''){
+			$query .= ' AND "nodepubkey" = :snode';
+			$content['request'] .= 'servicenode='.$snode;
+		}
+	    if($coin != ''){
+			$query .= ' AND "coin" = :coin';
+			$content['request'] .= ' coin='.$coin;
+		}
+	    if($service != ''){
+			$query .= ' AND "xrservice" = :service';
+			$content['request'] .= ' service='.$service;
+		}
+		$query .= ' ORDER BY "timelastseen" DESC';
+		//print($query);
+	    $statement1 = $db->prepare($query);
+		$statement1->bindValue(':snode', $snode);
+		$statement1->bindValue(':coin', $coin);
+		$statement1->bindValue(':service', $service);
+	}
 	$XRservices = $statement1->execute();
 	$services = [];
-	$exr = 0;
-	$online = 0;
 	
     while ($service = $XRservices->fetchArray())
     {
-		//$snodeObj = new SNode($snode);
 		$services[] = $service;
-		//$exr += (int)($snodeObj->exr == 1);
-		//$online += (int)($snodeObj->status == 'running');
 	}
 	$content['services'] = $services;
 	$content['servicesCount'] = count($services);
-	//$content['onlineNodes'] = $online;
-	//$content['exrNodes'] = $exr;
-	//$content['xrNodes'] = count($blocknetd->xrConnectedNodes()['reply']);
-    //$content['geo'] = FALSE;
 
     return $content;
 }
 
 function createDxWallets(){
     global $db;
-	$statement1 = $db->prepare('SELECT DISTINCT("coin"), COUNT("coin") AS "wallets" FROM "dxwallets" GROUP BY "coin"');
-	$wallets = $statement1->execute();
-	$rows = [];
-	
-    while ($row = $wallets->fetchArray())
+   
+	$wallets = [];
+    $statement1 = $db->prepare('SELECT DISTINCT("coin"), COUNT("coin") AS "wallets" FROM "dxwallets" GROUP BY "coin"');
+    $statement2 = $db->prepare('SELECT DISTINCT("coin"), COUNT("coin") AS "wallets" FROM "spvwallets" GROUP BY "coin"');
+
+	$dxCount = 0;
+	$spvCount = 0;
+    $result = $statement1->execute();
+    while ($row = $result->fetchArray())
     {
-		$rows[] = $row;
+		$wallets[$row['coin']]['dx'] = $row['wallets'];
+		$wallets[$row['coin']]['spv'] = '0';
+		$dxCount++;
 	}
-	$content['wallets'] = $rows;
-	$content['wCount'] = count($rows);
+    $result = $statement2->execute();
+    while ($row = $result->fetchArray())
+    {
+		$wallets[$row['coin']]['spv'] = $row['wallets'];
+		if(!isset($wallets[$row['coin']]['dx'])){
+			$wallets[$row['coin']]['dx'] = '0';
+		}
+		$spvCount++;
+	}
+    $statement1->close();
+    $statement2->close();
+	$content['wallets'] = $wallets;
+	$content['dxCount'] = $dxCount;
+	$content['spvCount'] = $spvCount;
     return $content;
 }
 

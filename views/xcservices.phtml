@@ -27,7 +27,7 @@
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="x_panel">
 					<div class="x_title">
-						<h2>XCloud services<small> </small></h2>
+						<h2>XCloud services<small> (showing <?= $content['request'] ?>)</small></h2>
 						<div class="clearfix"></div>
 					</div>
 					<div class="x_content">
@@ -66,13 +66,8 @@
 													<span class="sr-only">Toggle Dropdown</span>
 												</button>
 												<ul class="dropdown-menu">
-												    <li><a href="?p=tradesfees&days=1" target="_self">1 day</a></li>
-												    <li><a href="?p=tradesfees&days=7" target="_self">7 days</a></li>
-												    <li><a href="?p=tradesfees&days=14" target="_self">14 days</a></li>
-												    <li><a href="?p=tradesfees&days=30" target="_self">30 days</a></li>
-												    <li><a href="?p=tradesfees" target="_self">All time</a></li>
-													<li class="divider"></li>
-												    <li><a href="?p=pastorders&days=30&snode=<?= $row['servicenode'] ?>" target="_self">30 days trades</a></li>
+												    <li><a href="?p=xcservices&snode=<?=$service['nodepubkey']?>" target="_self">This node</a></li>
+												    <li><a href="?p=xcservices&service=<?=$service['xcservice']?>" target="_self">This service</a></li>
 													<li class="divider"></li>
 													<li><a href="https://chainz.cryptoid.info/block/address.dws?<?= $service['payment_address'] ?>" target="_blank"><i class="fa fa-globe fa-lg" style="color:lightblue"></i> Chainz</a></li>
 												</ul>
