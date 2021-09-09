@@ -44,7 +44,7 @@
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="x_panel">
 					<div class="x_title">
-						<h2>Servicenodes<small> - </small></h2>
+						<h2>Servicenodes</h2>
 						<div class="clearfix"></div>
 					</div>
 					<div class="x_content">
@@ -58,7 +58,7 @@
 									<th>Last seen</th>
 									<th>Status</th>
 									<th>Score</th>
-									<th>Services</th>
+									<th>Explore</th>
 								</tr>
 					  		</thead>
 							<tbody>
@@ -71,13 +71,14 @@
 									  	<td><?=$node->timeLastSeenStr ?></td>
 										<td><?=$node->status ?></td>
 										<td><?=$node->score ?></td>
-										<td> In the database!										   
-											<div class="btn-group pull-left" style="padding:5px 0 3px 0px; margin-bottom:0px">
+										<td>										   
+											<div class="btn-group dropright" style="padding:5px 0 3px 0px; margin-bottom:0px">
+											    <button type="button" class="btn btn-default btn-xs">Details</button>
 												<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													<span class="caret"></span>
 													<span class="sr-only">Toggle Dropdown</span>
 												</button>
-												<ul class="dropdown-menu">
+												<ul class="dropdown-menu dropdown-menu-right">
   												    <li><a href="?p=xrservices&snode=<?=$node->snodekey?>" target="_self">This node XRservices</a></li>
   												    <li><a href="?p=xcservices&snode=<?=$node->snodekey?>" target="_self">This node XCservices</a></li>
 													<li class="divider"></li>

@@ -38,7 +38,6 @@
 									<th>Maker Size</th>
 									<th>Taker</th>
 									<th>Taker Size</th>
-									<th>Fair price</th>
 									<th>Updated</th>
 									<th>Type</th>
 									<th>Status</th>
@@ -53,7 +52,6 @@
 										<td><?=$order['makerSize'] ?></td>
 										<td><?=$order['taker'] ?></td>
 										<td><?=$order['takerSize'] ?></td>
-										<td><?=$order['fair'] ?></td>
 										<td><?=$order['updatedAt'] ?></td>
 										<td><?=$order['orderType'] ?></td>
 										<td><?=$order['status'] ?></td>
@@ -97,7 +95,7 @@
 				"lengthChange": true,
 				"lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
 				"bInfo": false,
-				"order": [[ 5, "desc" ]]
+				"order": [[ 4, "desc" ]]
 			} );		
 	  		});
 		</script>

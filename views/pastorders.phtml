@@ -41,7 +41,7 @@
 									<th>Taker</th>
 									<th>Taker Amount</th>
 									<th>Order ID</th>
-									<th>More</th>
+									<th>Explore</th>
 								</tr>
 					  		</thead>
 							<tbody>
@@ -56,16 +56,17 @@
 										<td><?=$order['takerAmount'] ?></td>
 										<td><?=$order['xid'] ?></td>
 										<td>										   
-											<div class="btn-group pull-right" style="padding:5px 0px 3px 0px; margin-bottom:0px">
+											<div class="btn-group pull-left" style="padding:5px 0px 3px 0px; margin-bottom:0px">
+											<button type="button" class="btn btn-default btn-xs">Details</button>
 												<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													<span class="caret"></span>
 													<span class="sr-only">Toggle Dropdown</span>
 												</button>
 												<ul class="dropdown-menu">
-												    <li><a href="?p=pastorders&days=<?= $content['days'] ?>&maker=<?= $order['maker'] ?>" target="_self">Same maker</a></li>
-												    <li><a href="?p=pastorders&days=<?= $content['days'] ?>&taker=<?= $order['taker'] ?>" target="_self">Same taker</a></li>
-												    <li><a href="?p=pastorders&days=<?= $content['days'] ?>&maker=<?= $order['maker'] ?>&taker=<?= $order['taker'] ?>" target="_self">Same pair</a></li>
-												    <li><a href="?p=pastorders&days=<?= $content['days'] ?>&snode=<?= $order['snodekey'] ?>" target="_self">Same servicenode</a></li>
+												    <li><a href="?p=pastorders&days=<?= $content['days'] ?>&maker=<?= $order['maker'] ?>" target="_self">This maker</a></li>
+												    <li><a href="?p=pastorders&days=<?= $content['days'] ?>&taker=<?= $order['taker'] ?>" target="_self">This taker</a></li>
+												    <li><a href="?p=pastorders&days=<?= $content['days'] ?>&maker=<?= $order['maker'] ?>&taker=<?= $order['taker'] ?>" target="_self">This pair</a></li>
+												    <li><a href="?p=pastorders&days=<?= $content['days'] ?>&snode=<?= $order['snodekey'] ?>" target="_self">This servicenode</a></li>
 													<li class="divider"></li>
 												    <li><a href="?p=tradesfees&days=<?= $content['days'] ?>" target="_self">Trade stats</a></li>
 													<li class="divider"></li>

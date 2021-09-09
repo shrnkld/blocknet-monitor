@@ -42,17 +42,6 @@ class Config {
 	const DISPLAY_BLOCKS = 25;	
 	// Number of forks displayed on forks page
 	const DISPLAY_FORKS = 25;
-	// Number of NFT protocols displayed on NFTs page
-	const DISPLAY_PROTOS = 10;
-	// Number of NFTs displayed on NFTs page
-	const DISPLAY_TOKENS = 25;
-	// Number of NFTs displayed on NFTs page
-	const DISPLAY_NODES = 9999;
 
-	// Human friendly MN/SN active times
-	const HUMAN_TIMES = FALSE;
-
-	// Public mode disables wallet, rules, hoster and settings pages
-	const PUBLIC_MODE = TRUE;
 }
 ?>

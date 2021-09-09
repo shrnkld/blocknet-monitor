@@ -479,7 +479,8 @@ function createSNodesContent(){
 	$content['onlineNodes'] = $online;
 	$content['exrNodes'] = $exr;
 	$content['xrNodes'] = count($blocknetd->xrConnectedNodes()['reply']);
-
+    $content['geo'] = FALSE;
+	
     return $content;
 }
 
@@ -1175,7 +1176,10 @@ function dbupdate($doit = 0){
             $content['newVersion'] = 3;
         }
 		if($dbversion == 3){
+			$db->exec('BEGIN TRANSACTION');
 			$db->exec('CREATE VIEW "spvwallets" AS SELECT "coin", "nodepubkey" FROM "xrservices" GROUP BY "nodepubkey","coin" ORDER BY "coin"');
+	    	$db->exec('UPDATE "events" SET "dbversion" = 4');
+			$db->exec('COMMIT');
             $content['newVersion'] = 4;
         }
 		if($dbversion == 4){

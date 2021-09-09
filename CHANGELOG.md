@@ -5,7 +5,7 @@ Extend use of SQLite3 to past proposals and servicenodes
 
 Add Trade stats page
 
-Add SPV Wallets page
+Add DX/XR Wallets page
 
 Add XRouter services page
 
@@ -15,7 +15,7 @@ Add many inter-page links to related info (primarily to simplify mobile browsing
 
 Add more external links to Chainz for different things
 
-Enable autorefresh for Home, Open Orders and Servicenode pages
+Enable autorefresh for Home and Open Orders pages
 ## 0.1.2 - 2021-06-08 
 Use SQLite3 for past orders
 

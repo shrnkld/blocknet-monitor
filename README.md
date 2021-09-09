@@ -8,6 +8,10 @@ Blocknet Monitor (BPM) is a visualisation and monitoring system for the Blocknet
 
 * Extensive dashboard with general information about the node, connected peers and the blockchain
 * Overview of servicenodes
+* Overview of DX and XR wallets
+* Overview of XRouter (SPV) services
+* Overview of XCloud services
+* Overview of servicenode trades and fees stats
 * Overview of BlockDX open orders
 * Overview of BlockDX recently completed orders
 * Overview of active proposals in the Blocknet Decentralised Governance system
@@ -48,7 +52,8 @@ IP protection doesn't work here. If you use `Apache` you are fine, since the fol
 
 ## Roadmap
 
-- [ ] Loadsa brilliant stuff 
+- [ ] DeFi page
+- [ ] Other brilliant stuff 
 
 
 ## Suggested enhancements for community participation
