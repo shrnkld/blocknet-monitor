@@ -53,17 +53,17 @@
 										<td><?=$counts['dx'] ?></td>
 										<td><?=$counts['spv'] ?></td>
 										<td>										   
-											<div class="btn-group pull-left" style="padding:5px 0px 3px 0px; margin-bottom:0px">
+											<div class="btn-group pull-right" style="padding:5px 0px 3px 0px; margin-bottom:0px">
 											    <button type="button" class="btn btn-default btn-xs">Details</button>
 												<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													<span class="caret"></span>
 													<span class="sr-only">Toggle Dropdown</span>
 												</button>
 												<ul class="dropdown-menu">
-												    <li><a href="?p=pastorders&days=30&snode=<?= $row['servicenode'] ?>" target="_self">30 days trades</a></li>
+												    <li><a href="?p=pastorders&days=30" target="_self">30 days trades</a></li>
 												    <li><a href="?p=tradesfees&days=30" target="_self">30 days stats</a></li>
 													<li class="divider"></li>
-												    <li><a href="?p=xrservices&coin=<?=$coin?>" target="_self">XRservices</a></li>
+												    <li><a href="?p=xrservices&coin=<?=$coin?>" target="_self">This coin XRservices</a></li>
 												</ul>
 											</div>										   
 								   		</td>

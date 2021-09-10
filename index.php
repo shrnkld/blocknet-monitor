@@ -126,16 +126,7 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
 	   $error = 'Node offline or incorrect RPC data';
 	}
 	$data = array('section' => 'main', 'title' => 'Home', 'content' => $content);   
-   
-// New Main Page
-}elseif($_GET['p'] == 'newmain') {   
-	try{
-	$content = createMainContent();
-	}catch(\Exception $e) {
-	   $error = 'Node offline or incorrect RPC data';
-	}
-	$data = array('section' => 'newmain', 'title' => 'Home', 'content' => $content);   
-   
+      
 // Peers Page   
 }elseif($_GET['p'] == 'peers') {
 	
@@ -163,11 +154,6 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
 	$content = createSNodesContent();
 	$data = array('section' => 'servicenodes', 'title' => 'Servicenodes', 'content' => $content);  
  
-// Servicenode details Page
-}elseif($_GET['p'] == 'servicenodedetail') {
-	$content = fetchNodeDetails($_GET['nodepubkey']);
-	$data = array('section' => 'servicenodedetail', 'title' => 'Servicenode Details', 'content' => $content);  
- 
 // Proposals Page
 }elseif($_GET['p'] == 'proposals') {
 	$content = createGovernanceContent();
@@ -187,11 +173,6 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
 }elseif($_GET['p'] == 'forks') {
 	$content= createForksContent();
 	$data = array('section' => 'forks', 'title' => 'Forks', 'content' => $content);
-  
-// DeFi Page 
-}elseif($_GET['p'] == 'defi') {
-	$content = createDeFiContent();
-	$data = array('section' => 'defi', 'title' => 'DeFi', 'content' => $content);
   
 // Open Orders Page 
 }elseif($_GET['p'] == 'openorders') {
@@ -219,7 +200,7 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
 	$content= createPastOrdersContent($days, $maker, $taker, $snode);
 	$data = array('section' => 'pastorders', 'title' => 'Past Orders', 'content' => $content);
   
-// SPV Wallets Page 
+// DX/XR Wallets Page 
 }elseif($_GET['p'] == 'dxwallets') {
 	$content= createDxWallets();
 	$data = array('section' => 'dxwallets', 'title' => 'DX Wallets', 'content' => $content);
@@ -262,13 +243,8 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
 	}
 	$content= createTradesAndFees($days);
 	$data = array('section' => 'tradesfees', 'title' => 'Trades and Fees', 'content' => $content);
-  
-// Past Orders Page 
-}elseif($_GET['p'] == 'past30') {
-	$content= createPastOrdersContent(30);
-	$data = array('section' => 'pastorders', 'title' => 'Past Orders', 'content' => $content);
-  
-// Database update Page 
+
+	// Database update Page 
 }elseif($_GET['p'] == 'dbupdate') {
 	$content= dbupdate(1);
 	$data = array('section' => 'dbupdate', 'title' => 'DB Update', 'content' => $content);

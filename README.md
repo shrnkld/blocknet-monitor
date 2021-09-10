@@ -52,12 +52,14 @@ IP protection doesn't work here. If you use `Apache` you are fine, since the fol
 
 ## Roadmap
 
-- [ ] DeFi page
+- [ ] DeFi page 
+- [ ] Extend SQLite3 usage to peers
 - [ ] Other brilliant stuff 
 
 
 ## Suggested enhancements for community participation
 
+- [ ] Upgrade dependency frameworks (eg: Boostrap to at least v4)
 - [ ] Improve project structure
 - [ ] Improve error handling
 - [ ] More help icons

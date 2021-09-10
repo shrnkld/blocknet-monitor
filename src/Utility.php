@@ -865,4 +865,161 @@ function secondsToHuman($number_of_seconds, $out_seconds = True, $out_minutes = 
 	
 	return $human_string;
 }
+
+function chainzAPI($query){
+	// Curl
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_URL, "https://chainz.cryptoid.info/block/api.dws?q=".$query);
+	$result = json_decode(curl_exec($ch),true);
+	if(empty($result)){
+			print("Chainz API timeout ");
+			$result = [];
+	}
+	return $result;
+}
+
+function dbupdate($doit = 0){
+	global $db;
+	try{
+		$dbversion = $db->querySingle('SELECT "dbversion" FROM "events"') or $dbversion = 0;
+	} catch (\Exception $e) {
+		print($e);
+		$dbversion = 0;
+	}
+	if($doit <> 0){
+	    if($dbversion == 0){
+			$db->exec('BEGIN TRANSACTION');
+    		$db->exec('ALTER TABLE "events" ADD COLUMN "dbversion" INTEGER');
+            $db->exec('ALTER TABLE "events" ADD COLUMN "lastproposal" INTEGER');
+	    	$db->exec('UPDATE "events" SET "dbversion" = 1');
+			$db->exec('COMMIT');
+            $content['newVersion'] = 1;
+	    }
+		if($dbversion == 1){
+			$db->exec('BEGIN TRANSACTION');
+			$db->exec('CREATE TABLE IF NOT EXISTS "servicenodes"(
+				"nodepubkey" VARCHAR PRIMARY KEY NOT NULL,
+				"status" VARCHAR NOT NULL,
+				"score" INTEGER NOT NULL,
+				"banned" BOOLEAN NOT NULL DEFAULT FALSE,
+				"address" VARCHAR NOT NULL,
+				"payment_address" VARCHAR NOT NULL,
+				"tier" VARCHAR NOT NULL DEFAULT "SPV",
+				"xr" BOOLEAN NOT NULL DEFAULT FALSE,
+				"exr" BOOLEAN NOT NULL DEFAULT FALSE,
+				"timelastseen" INTEGER NOT NULL DEFAULT 0,
+				"updated" INTEGER NOT NULL DEFAULT 0,
+				"fee_default" INTEGER NOT NULL DEFAULT 0,
+				"ip_addr" VARCHAR,
+				"config" VARCHAR
+			)');
+		
+			$db->exec('CREATE TABLE IF NOT EXISTS "coins"(
+				"coin" VARCHAR PRIMARY KEY NOT NULL,
+				"name" VARCHAR,
+				"latest_version" VARCHAR
+			)');
+		
+			$db->exec('CREATE TABLE IF NOT EXISTS "xrServices"(
+				"nodepubkey" VARCHAR,
+				"xrservice" VARCHAR NOT NULL,
+				"coin" VARCHAR NOT NULL,
+				"fee" NUMBER,
+				"payment_address" VARCHAR NOT NULL,
+				"request_limit" INTEGER,
+				"fetch_limit" INTEGER,
+				"timeout" INTEGER,
+				"disabled" BOOLEAN,
+				"updated" INTEGER NOT NULL,
+				FOREIGN KEY ("nodepubkey") REFERENCES "servicenodes" ("nodepubkey"),
+				FOREIGN KEY ("coin") REFERENCES "spvWallets" ( "coin" )
+			)');
+		
+			$db->exec('CREATE TABLE IF NOT EXISTS "xcServices"(
+				"nodepubkey" VARCHAR,
+				"xcservice" VARCHAR NOT NULL,
+				"parameters" VARCHAR,
+				"fee" NUMBER,
+				"payment_address" VARCHAR NOT NULL,
+				"request_limit" INTEGER,
+				"fetch_limit" INTEGER,
+				"timeout" INTEGER,
+				"disabled" BOOLEAN,
+				"description" VARCHAR,
+				"updated" INTEGER NOT NULL,
+				FOREIGN KEY ("nodepubkey") REFERENCES "servicenodes" ("nodepubkey")
+			)');
+		
+			$db->exec('CREATE TABLE IF NOT EXISTS "spvWallets"(
+				"coin" VARCHAR,
+				"nodepubkey" VARCHAR,
+		        FOREIGN KEY ("nodepubkey") REFERENCES "servicenodes" ("nodepubkey")
+			)');
+		
+			$db->exec('CREATE TABLE IF NOT EXISTS "spvConfigs"(
+				"coin" VARCHAR ,
+				"nodepubkey" VARCHAR,
+				"xrservice" VARCHAR,
+				"fee" INTEGER NOT NULL,
+				"paymentAddress" VARCHAR NOT NULL,
+				"requestLimit" INTEGER NOT NULL,
+				"fetchLimit" INTEGER NOT NULL,
+				"timeout" INTEGER NOT NULL,
+				"disabled" BOOLEAN NOT NULL,
+				"lastUpdated" INTEGER,
+				FOREIGN KEY ("coin") REFERENCES "coins" ("coin"),
+				FOREIGN KEY ("nodepubkey") REFERENCES "servicenodes" ("nodepubkey"),
+				FOREIGN KEY ("xrservice") REFERENCES "xrServices" ("xrservice")
+			)');
+		
+			$db->exec('CREATE TABLE IF NOT EXISTS "fees"(
+				"nodepubkey" VARCHAR,
+				"xrservice" VARCHAR,
+				"fee" INTEGER NOT NULL,
+				FOREIGN KEY ("nodepubkey") REFERENCES "servicenodes" ("nodepubkey"),
+				FOREIGN KEY ("xrservice") REFERENCES "xrServices" ("xrservice")
+			)');
+	    	$db->exec('UPDATE "events" SET "dbversion" = 2');
+			$db->exec('COMMIT');
+            $content['newVersion'] = 2;
+        }
+		if($dbversion == 2){
+			$db->exec('BEGIN TRANSACTION');
+			$db->exec('ALTER TABLE "spvWallets" RENAME TO "dxWallets"');
+            $db->exec('ALTER TABLE "xrServices" RENAME TO "old_xrServices"');
+			$db->exec('CREATE TABLE "xrServices"(
+				"nodepubkey" VARCHAR,
+				"xrservice" VARCHAR NOT NULL,
+				"coin" VARCHAR NOT NULL,
+				"fee" NUMBER,
+				"payment_address" VARCHAR NOT NULL,
+				"request_limit" INTEGER,
+				"fetch_limit" INTEGER,
+				"timeout" INTEGER,
+				"disabled" BOOLEAN,
+				"updated" INTEGER NOT NULL,
+				FOREIGN KEY ("nodepubkey") REFERENCES "servicenodes" ("nodepubkey")
+			)');
+	        $db->exec('INSERT INTO "xrServices" SELECT * FROM "old_xrServices"');
+		    $db->exec('DROP TABLE "old_xrServices"'); 
+	    	$db->exec('UPDATE "events" SET "dbversion" = 3');
+			$db->exec('COMMIT');
+            $content['newVersion'] = 3;
+        }
+		if($dbversion == 3){
+			$db->exec('BEGIN TRANSACTION');
+			$db->exec('CREATE VIEW "spvwallets" AS SELECT "coin", "nodepubkey" FROM "xrservices" GROUP BY "nodepubkey","coin" ORDER BY "coin"');
+	    	$db->exec('UPDATE "events" SET "dbversion" = 4');
+			$db->exec('COMMIT');
+            $content['newVersion'] = 4;
+        }
+		if($dbversion == 4){
+            $content['newVersion'] = 4;
+        }
+	}
+    $content['oldVersion'] = $dbversion;
+    return $content;
+}
+
 ?>

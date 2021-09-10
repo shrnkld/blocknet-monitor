@@ -52,100 +52,6 @@ function createMainContent(){
 	return $content;
 }
 
-function createDeFiContent(){
-    $content['priceInfo'] = getPriceInfo();
-	$content['defi'] = getFunnyMoney();
-	$content['percentDeFi'] = round($content['defi']['wCRWtotal']/$content['priceInfo']['issued']*100,2);
-	$content['percentMCap'] = round($content['defi']["wCRWdollars"]/$content['priceInfo']['marketCap']*100,2);
-	return $content;
-}
-
-function getFunnyMoney(){
-	// wCRW info
-	// Total Token Supply at a contract address:
-	// API call to https://api.bscscan.com/api?module=stats&action=tokensupply&contractaddress=Config::ContractAddress&apikey=Config::ApiKey;
-	// eg: for wCRW total supply: https://bscscan.com/token/0x4b04fd7060ee7e30d5a2b369ee542f9ad8ada571
-	// {"status":"1","message":"OK","result":"210485370626586916749312"}
-	// with 18DPs, total supply=210485.370626586916749312 wCRW
-	// eg: wCRW/BUSD-T total supply result:
-	// {"status":"1","message":"OK","result":"34380897291898234538597"}
-	// with 18DPs, total Cake-LP token supply=34380.897291898234538597
-	// For BNB price: https://api.bscscan.com/api?module=stats&action=bnbprice&apikey=YourApiKeyToken
-	// {"status":"1","message":"OK","result":{"ethbtc":"0.004776","ethbtc_timestamp":"1616434004","ethusd":"271.22","ethusd_timestamp":"1616434028"}}
-    // For BUSD-T in the PancakeSwap V1 LP: https://api.bscscan.com/api?module=account&action=tokenbalance&contractaddress=0x55d398326f99059ff775485246999027b3197955&address=0x613aef33ddb3363b49c861044dfa0eb0453e7aa2&tag=latest&apikey=YourApiKeyToken
-	// {"status":"1","message":"OK","result":"15638364252616519034870"}
-	// For wCRW in the PancakeSwap V1 LP: https://api.bscscan.com/api?module=account&action=tokenbalance&contractaddress=0x4b04fd7060ee7e30d5a2b369ee542f9ad8ada571&address=0x613aef33ddb3363b49c861044dfa0eb0453e7aa2&tag=latest&apikey=YourApiKeyToken
-	// {"status":"1","message":"OK","result":"94590561041016418051265"}
-	//
-	// The PancakeSwap V2 LP is at 0x7825a772fb8a4eae3ee02139bb3dafdf63a60e95
-	// The YieldField wCRW/BUSD LP is at 0x56fe4028bb83265f89018773ed9947fd88ab8de0
-	// The YieldField wCRW/wBNB LP is at 0xaef98fdbd9685b499cf2a843ec042ce20ab7bb73
-
-	// create curl resource
-	$ch = curl_init();
-
-	//return the transfer as a string
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-	// get wCRW total supply
-	curl_setopt($ch, CURLOPT_URL, "https://api.bscscan.com/api?module=stats&action=tokensupply&contractaddress=" . Config::Token1ContractAddress . "&apikey=" . Config::ApiKey);
-	$decoded = json_decode(curl_exec($ch),TRUE);
-	$content['wCRWtotal'] = $decoded['result']/1000000000000000000;
-	$content["wCRWContractAddress"] = Config::Token1ContractAddress;
-
-	// get Pancake V1 wCRW/BUSD-T LP total supply
-	curl_setopt($ch, CURLOPT_URL, "https://api.bscscan.com/api?module=stats&action=tokensupply&contractaddress=" . Config::Swap0ContractAddress . "&apikey=" . Config::ApiKey);
-	$decoded = json_decode(curl_exec($ch),TRUE);
-	$content['LP0total'] = round($decoded['result']/1000000000000000000,2);
-	$content["LP0ContractAddress"] = Config::Swap0ContractAddress;
-	$content["LP0ContractLabel"] = Config::Swap0ContractLabel;
-	$content["LP0ContractUnits"] = Config::Swap0ContractUnits;
-	// get Pancake V2 wCRW/BUSD-T LP total supply
-	curl_setopt($ch, CURLOPT_URL, "https://api.bscscan.com/api?module=stats&action=tokensupply&contractaddress=" . Config::Swap1ContractAddress . "&apikey=" . Config::ApiKey);
-	$decoded = json_decode(curl_exec($ch),TRUE);
-	$content['LP1total'] = round($decoded['result']/1000000000000000000,2);
-	$content["LP1ContractAddress"] = Config::Swap1ContractAddress;
-	$content["LP1ContractLabel"] = Config::Swap1ContractLabel;
-	$content["LP1ContractUnits"] = Config::Swap1ContractUnits;
-	// get wCRW/BUSD-T LP total supply
-	curl_setopt($ch, CURLOPT_URL, "https://api.bscscan.com/api?module=stats&action=tokensupply&contractaddress=" . Config::Swap2ContractAddress . "&apikey=" . Config::ApiKey);
-	$decoded = json_decode(curl_exec($ch),TRUE);
-	$content['LP2total'] = round($decoded['result']/1000000000000000000,2);
-	$content["LP2ContractAddress"] = Config::Swap2ContractAddress;
-	$content["LP2ContractLabel"] = Config::Swap2ContractLabel;
-	$content["LP2ContractUnits"] = Config::Swap2ContractUnits;
-	// get wCRW/wBNB LP total supply
-	curl_setopt($ch, CURLOPT_URL, "https://api.bscscan.com/api?module=stats&action=tokensupply&contractaddress=" . Config::Swap3ContractAddress . "&apikey=" . Config::ApiKey);
-	$decoded = json_decode(curl_exec($ch),TRUE);
-	$content['LP3total'] = round($decoded['result']/1000000000000000000,2);
-	$content["LP3ContractAddress"] = Config::Swap3ContractAddress;
-	$content["LP3ContractLabel"] = Config::Swap3ContractLabel;
-	$content["LP3ContractUnits"] = Config::Swap3ContractUnits;
-    // external call to scrape the $ value of the LP contracts
-	exec("python3 scrape.py", $out, $rc);
-	$content["wCRWdollars"] = $out[0];
-	$content["LPTVL"] = number_format($out[1] + $out[2] + $out[3] + $out[4]);
-	$content["LP0dollars"] = number_format($out[1]);
-	$content["LP1dollars"] = number_format($out[2]);
-	$content["LP2dollars"] = number_format($out[3]);
-	$content["LP3dollars"] = number_format($out[4]);
-
-	// get qty of wCRW in YieldField LP
-	//curl_setopt($ch, CURLOPT_URL, "https://api.bscscan.com/api?module=account&action=tokenbalance&contractaddress=" . Config::Token1ContractAddress . "&address=" . Config::SwapContractAddress . "&tag=latest&apikey=" . Config::ApiKey);
-	//$decoded = json_decode(curl_exec($ch),TRUE);
-	//$content['LPwCRW'] = round($decoded['result']/1000000000000000000,2);
-
-	// get qty of BUSD in YieldField LP
-	//curl_setopt($ch, CURLOPT_URL, "https://api.bscscan.com/api?module=account&action=tokenbalance&contractaddress=" . Config::TokenContractAddress2 . "&address=" . Config::SwapContractAddress . "&tag=latest&apikey" . Config::ApiKey);
-	//$decoded = json_decode(curl_exec($ch),TRUE);
-	//$content['LPBUSD'] = round($decoded['result']/1000000000000000000,2);
-
-	// close curl handle to free up system resources
-	curl_close($ch);  
-
-	return $content;
-}
-
 function createPeerContent(){
 	global $trafficC, $trafficCIn, $trafficCOut, $blocknetd, $newPeersCount;
 
@@ -307,13 +213,6 @@ function updateSnodesContent(){
 
 	$servicenodes = $blocknetd->servicenodelist();
 	$xrConnectedNodes = $blocknetd->xrConnectedNodes();
-	//$servicenodecounts = $blocknetd->servicenodecount();
-	
-	//print("Servicenode counts\n");
-	//print("    Total: " . $servicenodecounts['total'] . "\n");
-	//print("   Online: " . $servicenodecounts['online'] . "\n");
-	//print("  Offline: " . $servicenodecounts['offline'] . "\n");
-	//print("  XRouter: " . count($xrConnectedNodes['reply']) . "\n");
 	$i = 0;
 	$j = 0;
 	$now = time();
@@ -480,12 +379,12 @@ function createSNodesContent(){
 	$content['exrNodes'] = $exr;
 	$content['xrNodes'] = count($blocknetd->xrConnectedNodes()['reply']);
     $content['geo'] = FALSE;
-	
+
     return $content;
 }
 
 function createXcServices($snode = '', $service = ''){
-	global $blocknetd, $db;
+	global $db;
 	updateSnodesContent();
 
 	$content['request'] = '';
@@ -503,7 +402,6 @@ function createXcServices($snode = '', $service = ''){
 			$content['request'] .= ' service='.$service;
 		}
 		$query .= ' ORDER BY "timelastseen" DESC';
-		//print($query);
 	    $statement1 = $db->prepare($query);
 		$statement1->bindValue(':snode', $snode);
 		$statement1->bindValue(':service', $service);
@@ -545,7 +443,6 @@ function createXrServices($snode = '', $coin = '', $service = ''){
 			$content['request'] .= ' service='.$service;
 		}
 		$query .= ' ORDER BY "timelastseen" DESC';
-		//print($query);
 	    $statement1 = $db->prepare($query);
 		$statement1->bindValue(':snode', $snode);
 		$statement1->bindValue(':coin', $coin);
@@ -626,7 +523,6 @@ function createGovernanceContent(){
 	$content['passingCount'] = 0;
 	$i = 0;
     foreach($proposals as $proposal){
-		$blockStart = $proposal['superblock'];
 		$content['proposal'][$i]['hash'] = $proposal['hash'];
 		$content['proposal'][$i]['name'] = $proposal['name'];
 		$content['proposal'][$i]['superblock'] = $proposal['superblock'];
@@ -771,9 +667,9 @@ function updatePastProposals(){
                                   GROUP BY "superblock" HAVING SUM("amount")>40000)
                                  AND "b"."amount" IS NULL)');
 
-    if ($i + $j > 0) {
-        print("Polished ".$j." proposals in ".$i." superblocks\n");
-    }
+    //if ($i + $j > 0) {
+    //    print("Polished ".$j." proposals in ".$i." superblocks\n");
+    //}
 }
 
 function createPastProposalsContent(){
@@ -1038,154 +934,4 @@ function createTradesAndFees($days = ''){
 	return $content;
 }
 
-function chainzAPI($query){
-	// Curl
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_URL, "https://chainz.cryptoid.info/block/api.dws?q=".$query);
-	$result = json_decode(curl_exec($ch),true);
-	if(empty($result)){
-			print("Chainz API timeout ");
-			$result = [];
-	}
-	return $result;
-}
-
-function dbupdate($doit = 0){
-	global $db;
-	try{
-		$dbversion = $db->querySingle('SELECT "dbversion" FROM "events"') or $dbversion = 0;
-	} catch (\Exception $e) {
-		print($e);
-		$dbversion = 0;
-	}
-	if($doit <> 0){
-	    if($dbversion == 0){
-    		$db->exec('ALTER TABLE "events" ADD COLUMN "dbversion" INTEGER');
-	    	$db->exec('UPDATE "events" SET "dbversion" = 1');
-                $content['newVersion'] = 1;
-	    }
-		if($dbversion == 1){
-			$db->exec('CREATE TABLE IF NOT EXISTS "servicenodes"(
-				"nodepubkey" VARCHAR PRIMARY KEY NOT NULL,
-				"status" VARCHAR NOT NULL,
-				"score" INTEGER NOT NULL,
-				"banned" BOOLEAN NOT NULL DEFAULT FALSE,
-				"address" VARCHAR NOT NULL,
-				"payment_address" VARCHAR NOT NULL,
-				"tier" VARCHAR NOT NULL DEFAULT "SPV",
-				"xr" BOOLEAN NOT NULL DEFAULT FALSE,
-				"exr" BOOLEAN NOT NULL DEFAULT FALSE,
-				"timelastseen" INTEGER NOT NULL DEFAULT 0,
-				"updated" INTEGER NOT NULL DEFAULT 0,
-				"fee_default" INTEGER NOT NULL DEFAULT 0,
-				"ip_addr" VARCHAR,
-				"config" VARCHAR
-			)');
-		
-			$db->exec('CREATE TABLE IF NOT EXISTS "coins"(
-				"coin" VARCHAR PRIMARY KEY NOT NULL,
-				"name" VARCHAR,
-				"latest_version" VARCHAR
-			)');
-		
-			$db->exec('CREATE TABLE IF NOT EXISTS "xrServices"(
-				"nodepubkey" VARCHAR,
-				"xrservice" VARCHAR NOT NULL,
-				"coin" VARCHAR NOT NULL,
-				"fee" NUMBER,
-				"payment_address" VARCHAR NOT NULL,
-				"request_limit" INTEGER,
-				"fetch_limit" INTEGER,
-				"timeout" INTEGER,
-				"disabled" BOOLEAN,
-				"updated" INTEGER NOT NULL,
-				FOREIGN KEY ("nodepubkey") REFERENCES "servicenodes" ("nodepubkey"),
-				FOREIGN KEY ("coin") REFERENCES "spvWallets" ( "coin" )
-			)');
-		
-			$db->exec('CREATE TABLE IF NOT EXISTS "xcServices"(
-				"nodepubkey" VARCHAR,
-				"xcservice" VARCHAR NOT NULL,
-				"parameters" VARCHAR,
-				"fee" NUMBER,
-				"payment_address" VARCHAR NOT NULL,
-				"request_limit" INTEGER,
-				"fetch_limit" INTEGER,
-				"timeout" INTEGER,
-				"disabled" BOOLEAN,
-				"description" VARCHAR,
-				"updated" INTEGER NOT NULL,
-				FOREIGN KEY ("nodepubkey") REFERENCES "servicenodes" ("nodepubkey")
-			)');
-		
-			$db->exec('CREATE TABLE IF NOT EXISTS "spvWallets"(
-				"coin" VARCHAR,
-				"nodepubkey" VARCHAR,
-		        FOREIGN KEY ("nodepubkey") REFERENCES "servicenodes" ("nodepubkey")
-			)');
-		
-			$db->exec('CREATE TABLE IF NOT EXISTS "spvConfigs"(
-				"coin" VARCHAR ,
-				"nodepubkey" VARCHAR,
-				"xrservice" VARCHAR,
-				"fee" INTEGER NOT NULL,
-				"paymentAddress" VARCHAR NOT NULL,
-				"requestLimit" INTEGER NOT NULL,
-				"fetchLimit" INTEGER NOT NULL,
-				"timeout" INTEGER NOT NULL,
-				"disabled" BOOLEAN NOT NULL,
-				"lastUpdated" INTEGER,
-				FOREIGN KEY ("coin") REFERENCES "coins" ("coin"),
-				FOREIGN KEY ("nodepubkey") REFERENCES "servicenodes" ("nodepubkey"),
-				FOREIGN KEY ("xrservice") REFERENCES "xrServices" ("xrservice")
-			)');
-		
-			$db->exec('CREATE TABLE IF NOT EXISTS "fees"(
-				"nodepubkey" VARCHAR,
-				"xrservice" VARCHAR,
-				"fee" INTEGER NOT NULL,
-				FOREIGN KEY ("nodepubkey") REFERENCES "servicenodes" ("nodepubkey"),
-				FOREIGN KEY ("xrservice") REFERENCES "xrServices" ("xrservice")
-			)');
-	    	$db->exec('UPDATE "events" SET "dbversion" = 2');
-            $content['newVersion'] = 2;
-			$db->exec('COMMIT');
-        }
-		if($dbversion == 2){
-			$db->exec('BEGIN TRANSACTION');
-			$db->exec('ALTER TABLE "spvWallets" RENAME TO "dxWallets"');
-            $db->exec('ALTER TABLE "xrServices" RENAME TO "old_xrServices"');
-			$db->exec('CREATE TABLE "xrServices"(
-				"nodepubkey" VARCHAR,
-				"xrservice" VARCHAR NOT NULL,
-				"coin" VARCHAR NOT NULL,
-				"fee" NUMBER,
-				"payment_address" VARCHAR NOT NULL,
-				"request_limit" INTEGER,
-				"fetch_limit" INTEGER,
-				"timeout" INTEGER,
-				"disabled" BOOLEAN,
-				"updated" INTEGER NOT NULL,
-				FOREIGN KEY ("nodepubkey") REFERENCES "servicenodes" ("nodepubkey")
-			)');
-	        $db->exec('INSERT INTO "xrServices" SELECT * FROM "old_xrServices"');
-		    $db->exec('DROP TABLE "old_xrServices"'); 
-	    	$db->exec('UPDATE "events" SET "dbversion" = 3');
-			$db->exec('COMMIT');
-            $content['newVersion'] = 3;
-        }
-		if($dbversion == 3){
-			$db->exec('BEGIN TRANSACTION');
-			$db->exec('CREATE VIEW "spvwallets" AS SELECT "coin", "nodepubkey" FROM "xrservices" GROUP BY "nodepubkey","coin" ORDER BY "coin"');
-	    	$db->exec('UPDATE "events" SET "dbversion" = 4');
-			$db->exec('COMMIT');
-            $content['newVersion'] = 4;
-        }
-		if($dbversion == 4){
-            $content['newVersion'] = 4;
-        }
-	}
-    $content['oldVersion'] = $dbversion;
-    return $content;
-}
+?>
