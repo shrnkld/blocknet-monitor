@@ -12,6 +12,10 @@ class SNode{
 	public $status; // string
 	public $score; // int
 	public $services; // string
+	public $xr; // bool
+	public $dxcount; // int
+	public $xrcount; // int
+	public $xccount; // int
 	//public $servicesOriginal; // string
 	//public $ip; // string
 	//public $ipOriginal;
@@ -36,7 +40,11 @@ class SNode{
 		$this->exr = $snode['exr'];
 		$this->status = $snode['status'];
 		$this->score = $snode['score'];
-		$this->services = "Coming soon";
+		$this->xr = $snode['xr'];
+		$this->dxcount = $snode['dxcount'];
+		$this->xrcount = $snode['xrcount'];
+		$this->xccount = $snode['xccount'];
+		$this->services = $snode['services'];;
 		//$this->services = getServices($snode['services']);
 		//$this->servicesOriginal = checkServiceString($snode['services']);
         //$this->country = "UN";

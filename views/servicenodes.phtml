@@ -54,7 +54,9 @@
 								    <th>Address</th>
 							 		<th>Tier</th>
 									<th>Type</th>
-									<th>Snodekey</th>
+									<th>DX wallets</th>
+									<th>XR services</th>
+									<th>XC services</th>
 									<th>Last seen</th>
 									<th>Status</th>
 									<th>Score</th>
@@ -62,27 +64,49 @@
 								</tr>
 					  		</thead>
 							<tbody>
-								<?php foreach($content['nodes'] as $node){ ?>
+								<?php $i = 0;
+								foreach($content['nodes'] as $node){ ?>
 									<tr>
  									    <td><?=$node->address ?></td>
 										<td><?=$node->tier ?></td>
 										<td><?php if($node->exr == 1){echo "EXR";} ?></td>
-										<td><?=$node->snodekey ?></td>
+										<td><?=$node->dxcount ?></td>
+										<td><?=$node->xrcount ?></td>
+										<td><?=$node->xccount ?></td>
 									  	<td><?=$node->timeLastSeenStr ?></td>
 										<td><?=$node->status ?></td>
 										<td><?=$node->score ?></td>
 										<td>										   
 											<div class="btn-group pull-right" style="padding:5px 0 3px 0px; margin-bottom:0px">
-											    <button type="button" class="btn btn-default btn-xs">Details</button>
+											    <button type="button" class="btn btn-default btn-xs" data-toggle="modal" <?php echo 'data-target="#services'.$i.'"'; ?>>Details</button>
+												<!-- Modal -->
+												<div <?php echo 'id="services'.$i.'"'; ?> class="modal fade" role="dialog">
+  													<div class="modal-dialog modal-dialog-scrollable modal-lg">
+    													<!-- Modal content-->
+    													<div class="modal-content">
+      														<div class="modal-header">
+		   														<button type="button" class="close" data-dismiss="modal">&times;</button>
+        														<h4 class="modal-title">Services list for <?=$node->address?></h4>
+      														</div>
+      														<div class="modal-body">
+																<p><?= $node->services ?></p>
+      														</div>
+      														<div class="modal-footer">
+        														<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      														</div>
+    													</div>
+  													</div>
+												</div>
 												<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													<span class="caret"></span>
 													<span class="sr-only">Toggle Dropdown</span>
 												</button>
 												<ul class="dropdown-menu">
-  												    <li><a href="?p=xrservices&snode=<?=$node->snodekey?>" target="_self">This node XRservices</a></li>
-  												    <li><a href="?p=xcservices&snode=<?=$node->snodekey?>" target="_self">This node XCservices</a></li>
-													<li class="divider"></li>
+													<li>This node</li>
+  												    <li><a href="?p=xrservices&snode=<?=$node->snodekey?>" target="_self">XRservices</a></li>
+  												    <li><a href="?p=xcservices&snode=<?=$node->snodekey?>" target="_self">XCservices</a></li>
 												    <li><a href="?p=pastorders&days=30&snode=<?= $node->address ?>" target="_self">30 days trades</a></li>
+													<li class="divider"></li>
 												    <li><a href="?p=tradesfees&days=30" target="_self">30 days trade stats</a></li>
 													<li class="divider"></li>
 													<li><a href="https://chainz.cryptoid.info/block/address.dws?<?= $node->address ?>" target="_blank"><i class="fa fa-globe fa-lg" style="color:lightblue"></i> Chainz</a></li>
@@ -90,7 +114,7 @@
 											</div>										   
 								   		</td>										   
 									</tr>
-								<?php } ?>						
+								<?php $i++; } ?>						
 							</tbody>
 						</table>
 					</div>
@@ -179,7 +203,7 @@
 				"lengthChange": true,
 				"lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
 				"bInfo": false,
-				"order": [[ 4, "desc" ]]
+				"order": [[ 3, "desc" ]]
 			} );		
 	  		});
 		</script>

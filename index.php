@@ -201,9 +201,9 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
 	$data = array('section' => 'pastorders', 'title' => 'Past Orders', 'content' => $content);
   
 // DX/XR Wallets Page 
-}elseif($_GET['p'] == 'dxwallets') {
-	$content= createDxWallets();
-	$data = array('section' => 'dxwallets', 'title' => 'DX Wallets', 'content' => $content);
+}elseif($_GET['p'] == 'dxxrwallets') {
+	$content= createDxXrWallets();
+	$data = array('section' => 'dxxrwallets', 'title' => 'DX+XR Wallets', 'content' => $content);
   
 // XRouter services Page 
 }elseif($_GET['p'] == 'xrservices') {

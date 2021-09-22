@@ -5,17 +5,17 @@
 					<div class="col-md-6 col-sm-12 col-xs-12 tile_stats_count">
 						<span class="count_top"><i class="fas fa-exchange-alt"></i> BlockDX servicenode trades stats</span>
 						<div class="count"><?= $content['nodeCount'] ?> <small>Servicenodes facilitated at least 1 trade</small></div>
-						<span class="count_bottom"><?= $content['days'] ?></span>
+						<span class="count_bottom"><?= $content['period'] ?></span>
 					</div>
 					<div class="col-md-3 col-sm-6 col-xs-6 tile_stats_count">
 						<span class="count_top"><i class="fas fa-exchange-alt"></i> Total trades </span>
 						<div class="count"><?= $content['totalTrades'] ?> <small> this period</small></div>
-						<span class="count_bottom"><?= $content['days'] ?></span>
+						<span class="count_bottom"><?= $content['period'] ?></span>
 					</div>
 					<div class="col-md-3 col-sm-6 col-xs-6 tile_stats_count">
 						<span class="count_top"><i class="fas fa-exchange-alt"></i> Total fees</span>
 						<div class="count"><?= $content['totalFees'] ?> <small> BLOCK</small></div>
-						<span class="count_bottom"><?= $content['days'] ?></span>
+						<span class="count_bottom"><?= $content['period'] ?></span>
 					</div>
 				</div>
 			</div>
@@ -71,7 +71,7 @@
 												    <li><a href="?p=tradesfees&days=30" target="_self">30 days</a></li>
 												    <li><a href="?p=tradesfees" target="_self">All time</a></li>
 													<li class="divider"></li>
-												    <li><a href="?p=pastorders&days=30&snode=<?= $row['servicenode'] ?>" target="_self">30 days trades</a></li>
+												    <li><a href="?p=pastorders&days=<?= $content['days'] ?>&snode=<?= $row['servicenode'] ?>" target="_self">This node trades</a></li>
 													<li class="divider"></li>
 													<li><a href="https://chainz.cryptoid.info/block/address.dws?<?= $row['servicenode'] ?>" target="_blank"><i class="fa fa-globe fa-lg" style="color:lightblue"></i> Chainz</a></li>
 												</ul>

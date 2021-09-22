@@ -220,7 +220,7 @@ function updateSnodesContent(){
 	$db->exec('BEGIN TRANSACTION');
 	$statement1 = $db->prepare('INSERT INTO "servicenodes" ("nodepubkey", "tier", "address", "payment_address", "timelastseen", "exr", "status", "score", "updated")
 								VALUES (:nodepubkey, :tier, :address, :paymentaddress, :timelastseen, :exr, :status, :score, :updated)');
-	$statement2 = $db->prepare('UPDATE "servicenodes" SET xr=1 WHERE "nodepubkey"=:nodepubkey');
+	$statement2 = $db->prepare('UPDATE "servicenodes" SET "xr"=:xr, "dxcount"=:dxcount, "xrcount"=:xrcount, "xccount"=:xccount, "services"=:services WHERE "nodepubkey"=:nodepubkey');
 	$statement3 = $db->prepare('INSERT INTO "dxWallets" VALUES(:coin, :nodepubkey)');
 	//$statement4 = $db->prepare('INSERT INTO "xrServices" VALUES(:nodepubkey, :command, :coin, :fee, :paymentAddress, :requestLimit, :fetchLimit, :timeout, :disabled, :updated)');
 	//$statement5 = $db->prepare('INSERT INTO "xcServices" ("nodepubkey", "xcservice", "payment_address", "updated") VALUES(:nodepubkey, :name, :paymentAddress, :updated)');
@@ -241,26 +241,39 @@ function updateSnodesContent(){
 			print("Insert servicenode failed with " .$e->GetMessage()."\n");
 			$j++;
 		}
+		$xr = FALSE;
+		$xrcount = 0;
+		$xccount = 0;
+		$dxcount = 0;
+		$services = '';
+		$statement2->bindvalue(':nodepubkey', $node['snodekey']);
 		foreach($node['services'] as $service) {
 			if($service == 'xr'){
-				$statement2->bindvalue(':nodepubkey', $node['snodekey']);
-				$statement2->execute();
+				$xr = TRUE;
 			}elseif(substr($service, 0, 4) == 'xr::'){
-				// Do nothing here; get the information from xrConnectedNodes instead
-				//$statement4->bindvalue(':nodepubkey', $node['snodekey']);
-				//$statement4->bindvalue(':coin', substr($service, 4);
+				$xrcount ++;
+				$services .= ','.$service;
 			}elseif(substr($service, 0, 5) == 'xrs::'){
-				// Do nothing here as well; get the info from xrConnectedNodes.
-				//$statement5->bindvalue(':nodepubkey', $node['snodekey']);
-				//$statement5->bindvalue(':name', substr($service, 5));
-				//$statement5->bindvalue(':paymentAddress', $node['address']);
-				//$statement5->bindvalue(':updated', $now);
-				//$statement5->execute();
+				$xccount ++;
+		        $services .= ','.$service;
 			}else{
+				$dxcount ++;
+				$services .= ','.$service;
 				$statement3->bindvalue(':nodepubkey', $node['snodekey']);
 				$statement3->bindvalue(':coin', $service);
 				$statement3->execute();
 			}
+		}
+		$statement2->bindvalue(':xr', $xr);
+		$statement2->bindvalue(':xrcount', $xrcount);
+		$statement2->bindvalue(':xccount', $xccount);
+		$statement2->bindvalue(':dxcount', $dxcount);
+		$statement2->bindvalue(':services', trim($services, ','));
+		try {
+			$statement2->execute();
+		} catch (\Exception $e) {
+			print("Update servicenode failed with " .$e->GetMessage()."\n");
+			$j++;
 		}
 		$i++;
 	}
@@ -269,9 +282,9 @@ function updateSnodesContent(){
 	$statement3->close();
 	//$statement4->close();
 	//$statement5->close();
-	$db->exec("COMMIT");
+	$db->exec('COMMIT');
 	
-	$db->exec("BEGIN TRANSACTION");
+	$db->exec('BEGIN TRANSACTION');
 	$statement1 = $db->prepare('UPDATE "servicenodes" 
 								SET "score"=:score, 
 									"banned"=:banned, 
@@ -354,7 +367,7 @@ function updateSnodesContent(){
 	$statement1->close();
 	$statement2->close();
 	$statement3->close();
-	$db->exec("COMMIT");
+	$db->exec('COMMIT');
 }
 
 function createSNodesContent(){
@@ -461,7 +474,7 @@ function createXrServices($snode = '', $coin = '', $service = ''){
     return $content;
 }
 
-function createDxWallets(){
+function createDxXrWallets(){
     global $db;
    
 	$wallets = [];
@@ -837,11 +850,19 @@ function updatePastOrders() {
 }
 
 function createPastOrdersContent($days = 1, $maker = '', $taker = '', $snode = ''){
-	global $db;
+	global $blocknetd, $db;
 
 	updatePastOrders();
 
 	$content = [];
+	if($days == 0){   // special case: 
+		if($maker.$taker.$snode <> ''){
+			$genesis = $blocknetd->getblock($blocknetd->getblockhash(0))['time'];
+			$days = intdiv((time() - $genesis), 86400); // so long as there is some search criteria
+		}else{
+			$days = 1; // otherwise stick to the normal default
+		}
+	}
 	$content['days'] = $days;
 	$content['pastOrderCount'] = 0;
 	$blocks = $days * 1440;
@@ -895,9 +916,11 @@ function createTradesAndFees($days = ''){
 	
 	$content = [];
 	if($days == ''){
-		$content['days'] = 'All time';	
+		$content['period'] = 'All time';
+		$content['days'] = 0; // Special case
 	}else{
-	    $content['days'] = 'Last '.$days.' days.';
+	    $content['period'] = 'Last '.$days.' days.';
+		$content['days'] = $days;
 	    //$blocks = $days * 1440;
 	    //$content['blocks'] = $blocks;
     }

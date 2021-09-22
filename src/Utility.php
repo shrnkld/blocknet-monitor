@@ -1015,7 +1015,20 @@ function dbupdate($doit = 0){
             $content['newVersion'] = 4;
         }
 		if($dbversion == 4){
-            $content['newVersion'] = 4;
+			$db->exec('BEGIN TRANSACTION');
+			$db->exec('ALTER TABLE "servicenodes" ADD COLUMN "dxcount" INTEGER');
+			$db->exec('ALTER TABLE "servicenodes" ADD COLUMN "xrcount" INTEGER');
+			$db->exec('ALTER TABLE "servicenodes" ADD COLUMN "xccount" INTEGER');
+	    	$db->exec('UPDATE "events" SET "dbversion" = 5');
+			$db->exec('COMMIT');
+            $content['newVersion'] = 5;
+        }
+		if($dbversion == 5){
+			$db->exec('BEGIN TRANSACTION');
+			$db->exec('ALTER TABLE "servicenodes" ADD COLUMN "services" VARCHAR');
+	    	$db->exec('UPDATE "events" SET "dbversion" = 6');
+			$db->exec('COMMIT');
+            $content['newVersion'] = 6;
         }
 	}
     $content['oldVersion'] = $dbversion;
