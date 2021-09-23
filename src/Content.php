@@ -203,19 +203,308 @@ function createMempoolContent(){
 	return $content;
 }
 
-function createNodesContent(){
-	global $blocknetd;
+function updateSnodesContent(){
+    global $blocknetd, $db;
 
-	$nodes = getNodesData();
-	$counts = $blocknetd->servicenodecount();
+	$db->exec('DELETE FROM "servicenodes"');
+	$db->exec('DELETE FROM "dxWallets"');
+	$db->exec('DELETE FROM "xrServices"');
+	$db->exec('DELETE FROM "xcServices"');
 
+	$servicenodes = $blocknetd->servicenodelist();
+	$xrConnectedNodes = $blocknetd->xrConnectedNodes();
+	$i = 0;
+	$j = 0;
+	$now = time();
+
+	$db->exec('BEGIN TRANSACTION');
+	$statement1 = $db->prepare('INSERT INTO "servicenodes" ("nodepubkey", "tier", "address", "payment_address", "timelastseen", "exr", "status", "score", "updated")
+								VALUES (:nodepubkey, :tier, :address, :paymentaddress, :timelastseen, :exr, :status, :score, :updated)');
+	$statement2 = $db->prepare('UPDATE "servicenodes" SET "xr"=:xr, "dxcount"=:dxcount, "xrcount"=:xrcount, "xccount"=:xccount, "services"=:services WHERE "nodepubkey"=:nodepubkey');
+	$statement3 = $db->prepare('INSERT INTO "dxWallets" VALUES(:coin, :nodepubkey)');
+	//$statement4 = $db->prepare('INSERT INTO "xrServices" VALUES(:nodepubkey, :command, :coin, :fee, :paymentAddress, :requestLimit, :fetchLimit, :timeout, :disabled, :updated)');
+	//$statement5 = $db->prepare('INSERT INTO "xcServices" ("nodepubkey", "xcservice", "payment_address", "updated") VALUES(:nodepubkey, :name, :paymentAddress, :updated)');
+
+	foreach($servicenodes as $node){
+		$statement1->bindValue(':nodepubkey', $node['snodekey']);
+		$statement1->bindValue(':tier', $node['tier']);
+		$statement1->bindValue(':address', $node['address']);
+		$statement1->bindValue(':paymentaddress', $node['address']);
+		$statement1->bindValue(':timelastseen', $node['timelastseen']);
+		$statement1->bindValue(':exr', $node['exr']);
+		$statement1->bindValue(':status', $node['status']);
+		$statement1->bindValue(':score', $node['score']);
+		$statement1->bindValue(':updated', $now);
+		try {
+			$statement1->execute();
+		} catch (\Exception $e) {
+			print("Insert servicenode failed with " .$e->GetMessage()."\n");
+			$j++;
+		}
+		$xr = FALSE;
+		$xrcount = 0;
+		$xccount = 0;
+		$dxcount = 0;
+		$services = '';
+		$statement2->bindvalue(':nodepubkey', $node['snodekey']);
+		foreach($node['services'] as $service) {
+			if($service == 'xr'){
+				$xr = TRUE;
+			}elseif(substr($service, 0, 4) == 'xr::'){
+				$xrcount ++;
+				$services .= ','.$service;
+			}elseif(substr($service, 0, 5) == 'xrs::'){
+				$xccount ++;
+		        $services .= ','.$service;
+			}else{
+				$dxcount ++;
+				$services .= ','.$service;
+				$statement3->bindvalue(':nodepubkey', $node['snodekey']);
+				$statement3->bindvalue(':coin', $service);
+				$statement3->execute();
+			}
+		}
+		$statement2->bindvalue(':xr', $xr);
+		$statement2->bindvalue(':xrcount', $xrcount);
+		$statement2->bindvalue(':xccount', $xccount);
+		$statement2->bindvalue(':dxcount', $dxcount);
+		$statement2->bindvalue(':services', trim($services, ','));
+		try {
+			$statement2->execute();
+		} catch (\Exception $e) {
+			print("Update servicenode failed with " .$e->GetMessage()."\n");
+			$j++;
+		}
+		$i++;
+	}
+	$statement1->close();
+	$statement2->close();
+	$statement3->close();
+	//$statement4->close();
+	//$statement5->close();
+	$db->exec('COMMIT');
+	
+	$db->exec('BEGIN TRANSACTION');
+	$statement1 = $db->prepare('UPDATE "servicenodes" 
+								SET "score"=:score, 
+									"banned"=:banned, 
+									"payment_address"=:paymentaddress, 
+									"tier"=:tier, 
+									"fee_default"=:feedefault, 
+									"updated"=:updated 
+								WHERE "nodepubkey" = :nodepubkey');
+	$statement2 = $db->prepare('INSERT INTO "xrServices" 
+								VALUES(:nodepubkey, 
+									   :xrservice, 
+									   :coin, 
+									   :fee, 
+									   :paymentaddress, 
+									   :requestlimit, 
+									   :fetchlimit, 
+									   :timeout, 
+									   :disabled,
+									   :updated)');
+	$statement3 = $db->prepare('INSERT INTO "xcServices" 
+								VALUES(:nodepubkey, 
+									   :xcservice, 
+									   :parameters,
+									   :fee, 
+									   :paymentaddress, 
+									   :requestlimit, 
+									   :fetchlimit, 
+									   :timeout, 
+									   :disabled,
+									   :description,
+									   :updated)');
+
+	foreach($xrConnectedNodes['reply'] as $node){
+		$statement1->bindValue(':nodepubkey', $node['nodepubkey']);
+		$statement1->bindValue(':score', $node['score']);
+		$statement1->bindValue(':banned', $node['banned']);
+		$statement1->bindValue(':paymentaddress', $node['paymentaddress']);
+		$statement1->bindValue(':tier', $node['tier']);
+		$statement1->bindValue(':feedefault', $node['feedefault']);
+		$statement1->bindValue(':updated', $now);
+		try {
+			$statement1->execute();
+		} catch (\Exception $e) {
+			print("Update servicenode failed with " .$e->GetMessage()."\n");
+		}
+
+		foreach($node['spvconfigs'] as $onespv){
+			$statement2->bindValue(':nodepubkey', $node['nodepubkey']);
+			$statement2->bindValue(':coin', trim($onespv['spvwallet']));
+			foreach($onespv['commands'] as $command){
+				if($command['command'] != "xrGetConfig"){ 
+					$statement2->bindValue(':xrservice', $command['command']);
+					$statement2->bindValue(':fee', $command['fee']);
+					$statement2->bindValue(':paymentaddress', $command['paymentaddress']);
+					$statement2->bindValue(':requestlimit', $command['requestlimit']);
+					$statement2->bindValue(':fetchlimit', $command['fetchlimit']);
+					$statement2->bindValue(':timeout', $command['timeout']);
+					$statement2->bindValue(':disabled', $command['disabled']);
+					$statement2->bindValue(':updated', $now);
+					$statement2->execute();
+				}
+			}
+		}
+
+		foreach($node['services'] as $service => $command){
+			$statement3->bindValue(':nodepubkey', $node['nodepubkey']);
+			$statement3->bindValue(':xcservice', $service);
+			$statement3->bindValue(':parameters', $command['parameters']);
+			$statement3->bindValue(':fee', $command['fee']);
+			$statement3->bindValue(':paymentaddress', $command['paymentaddress']);
+			$statement3->bindValue(':requestlimit', $command['requestlimit']);
+			$statement3->bindValue(':fetchlimit', $command['fetchlimit']);
+			$statement3->bindValue(':timeout', $command['timeout']);
+			$statement3->bindValue(':disabled', $command['disabled']);
+			$statement3->bindValue(':description', $command['help']);
+			$statement3->bindValue(':updated', $now);
+			$statement3->execute();
+		}
+	}
+	$statement1->close();
+	$statement2->close();
+	$statement3->close();
+	$db->exec('COMMIT');
+}
+
+function createSNodesContent(){
+	global $blocknetd, $db;
+	updateSnodesContent();
+
+	$statement1 = $db->prepare('SELECT * FROM "servicenodes" ORDER BY "timelastseen" DESC');
+	$servicenodes = $statement1->execute();
+	$nodes = [];
+	$exr = 0;
+	$online = 0;
+    while ($snode = $servicenodes->fetchArray())
+    {
+		$snodeObj = new SNode($snode);
+		$nodes[] = $snodeObj;
+		$exr += (int)($snodeObj->exr == 1);
+		$online += (int)($snodeObj->status == 'running');
+	}
 	$content['nodes'] = $nodes;
-	$content['totalNodes'] = $counts['total'];
-	$content['onlineNodes'] = $counts['online'];
+	$content['totalNodes'] = count($nodes);
+	$content['onlineNodes'] = $online;
+	$content['exrNodes'] = $exr;
 	$content['xrNodes'] = count($blocknetd->xrConnectedNodes()['reply']);
-	$content['geo'] = Config::NODES_GEO;
+    $content['geo'] = FALSE;
 
-	return $content;
+    return $content;
+}
+
+function createXcServices($snode = '', $service = ''){
+	global $db;
+	updateSnodesContent();
+
+	$content['request'] = '';
+	if($snode.$service == ''){
+		$statement1 = $db->prepare('SELECT * FROM "xcservices" ORDER BY "timelastseen" DESC');
+		$content['request'] = 'All services on all nodes.';
+	}else{
+	    $query = 'SELECT * FROM "xcservices" WHERE 1=1';
+	    if($snode != ''){
+			$query .= ' AND "nodepubkey" = :snode';
+			$content['request'] .= 'servicenode='.$snode;
+		}
+	    if($service != ''){
+			$query .= ' AND "xcservice" = :service';
+			$content['request'] .= ' service='.$service;
+		}
+		$query .= ' ORDER BY "timelastseen" DESC';
+	    $statement1 = $db->prepare($query);
+		$statement1->bindValue(':snode', $snode);
+		$statement1->bindValue(':service', $service);
+	}
+	$XCservices = $statement1->execute();
+
+	$services = [];
+
+    while ($service = $XCservices->fetchArray())
+    {
+		$services[] = $service;
+	}
+	$content['services'] = $services;
+	$content['servicesCount'] = count($services);
+
+    return $content;
+}
+
+function createXrServices($snode = '', $coin = '', $service = ''){
+	global $db;
+	updateSnodesContent();
+
+	$content['request'] = '';
+	if($snode.$coin.$service == ''){
+		$statement1 = $db->prepare('SELECT * FROM "xrservices" ORDER BY "timelastseen" DESC');
+		$content['request'] = 'All services on all nodes.';
+	}else{
+	    $query = 'SELECT * FROM "xrservices" WHERE 1=1';
+	    if($snode != ''){
+			$query .= ' AND "nodepubkey" = :snode';
+			$content['request'] .= 'servicenode='.$snode;
+		}
+	    if($coin != ''){
+			$query .= ' AND "coin" = :coin';
+			$content['request'] .= ' coin='.$coin;
+		}
+	    if($service != ''){
+			$query .= ' AND "xrservice" = :service';
+			$content['request'] .= ' service='.$service;
+		}
+		$query .= ' ORDER BY "timelastseen" DESC';
+	    $statement1 = $db->prepare($query);
+		$statement1->bindValue(':snode', $snode);
+		$statement1->bindValue(':coin', $coin);
+		$statement1->bindValue(':service', $service);
+	}
+	$XRservices = $statement1->execute();
+	$services = [];
+	
+    while ($service = $XRservices->fetchArray())
+    {
+		$services[] = $service;
+	}
+	$content['services'] = $services;
+	$content['servicesCount'] = count($services);
+
+    return $content;
+}
+
+function createDxXrWallets(){
+    global $db;
+   
+	$wallets = [];
+    $statement1 = $db->prepare('SELECT DISTINCT("coin"), COUNT("coin") AS "wallets" FROM "dxwallets" GROUP BY "coin"');
+    $statement2 = $db->prepare('SELECT DISTINCT("coin"), COUNT("coin") AS "wallets" FROM "spvwallets" GROUP BY "coin"');
+
+	$dxCount = 0;
+	$spvCount = 0;
+    $result = $statement1->execute();
+    while ($row = $result->fetchArray())
+    {
+		$wallets[$row['coin']]['dx'] = $row['wallets'];
+		$wallets[$row['coin']]['spv'] = '0';
+		$dxCount++;
+	}
+    $result = $statement2->execute();
+    while ($row = $result->fetchArray())
+    {
+		$wallets[$row['coin']]['spv'] = $row['wallets'];
+		if(!isset($wallets[$row['coin']]['dx'])){
+			$wallets[$row['coin']]['dx'] = '0';
+		}
+		$spvCount++;
+	}
+    $statement1->close();
+    $statement2->close();
+	$content['wallets'] = $wallets;
+	$content['dxCount'] = $dxCount;
+	$content['spvCount'] = $spvCount;
+    return $content;
 }
 
 function createGovernanceContent(){
@@ -247,7 +536,6 @@ function createGovernanceContent(){
 	$content['passingCount'] = 0;
 	$i = 0;
     foreach($proposals as $proposal){
-		$blockStart = $proposal['superblock'];
 		$content['proposal'][$i]['hash'] = $proposal['hash'];
 		$content['proposal'][$i]['name'] = $proposal['name'];
 		$content['proposal'][$i]['superblock'] = $proposal['superblock'];
@@ -296,47 +584,163 @@ function createGovernanceContent(){
 	return $content;
 }
 
-function createOldGovernanceContent(){
-	global $blocknetd;
+function updatePastProposals(){
+	global $blocknetd, $db;
+	$height = $blocknetd->getblockcount();
+	$lastSuperblock = intdiv($height, 43200) * 43200;
+	$lastProposal = $db->querySingle('SELECT "lastproposal" FROM "events"') or 1296000;
+ 
+	if($lastSuperblock <> $lastProposal){
+		//print("Checking proposals since block ".$lastProposal."\n");
+ 
+		$proposals = $blocknetd->listproposals($lastProposal + 1);
+	
+		$statement = $db->prepare('INSERT INTO "pastproposals" (
+			"hash","name","superblock","amount","address","url","description","yeas","nays","abstains","status")
+			 VALUES (:phash, :pname, :psuperblock, :pamount, :paddress, :purl, :pdescription, :pyeas, :pnays, :pabstains, :pstatus)');
+		$statement2 = $db->prepare('UPDATE "events" set "lastproposal" = :height');
+		$statement2->bindValue(':height', $lastSuperblock);
+	
+		$db->exec("BEGIN");
+		$i = 0;
+		$j = 0;
+		foreach($proposals as $proposal){
+			if($proposal['superblock'] <= $height){
+				$statement->bindValue(':phash', $proposal['hash']);
+				$statement->bindValue(':pname', $proposal['name']);
+				$statement->bindValue(':psuperblock', $proposal['superblock']);
+				$statement->bindValue(':pamount', $proposal['amount']);
+				$statement->bindValue(':paddress', $proposal['address']);
+				$statement->bindValue(':purl', $proposal['url']);
+				$statement->bindValue(':pdescription', $proposal['description']);
+				$statement->bindValue(':pyeas', $proposal['votes_yes']);
+				$statement->bindValue(':pnays', $proposal['votes_no']);
+				$statement->bindValue(':pabstains', $proposal['votes_abstain']);
+				$statement->bindValue(':pstatus', $proposal['status']);
+				try {
+					$statement->execute();
+					$i++;
+				} catch (\Exception $e) {
+					print("Insert failed with " .$e->GetMessage()."\n");
+					$j++;
+				}
+			}
+		}
+		$statement2->execute();
+		$db->exec("COMMIT");
+		//print("Proposal inserts succeeded: ".$i." failed: ".$j."\n");    
+	}else{
+		//print("No completed proposals to insert\n");
+	}
+
+	// Now "polish" the proposals: find those which passed but did not get paid
+    // and change their status to "not paid".
+
+    // First build the work table of all payments made in each oversubscribed superblock
+	$db->exec('DELETE FROM "scratch"');
+    $statement1 = $db->prepare('SELECT "superblock" FROM "pastproposals" WHERE "status"="passed" 
+                                GROUP BY "superblock"
+                                HAVING SUM("amount")>40000');
+    $statement2 = $db->prepare('INSERT INTO "scratch" VALUES(:superblock, :txid, :amount, :addr)');
+
+    $result = $statement1->execute();
+    $db->exec('BEGIN');
+    $i = 0;
+    $j = 0;
+    while ($row = $result->fetchArray()) {
+        $i++;
+        $blockhash = $blocknetd->getblockhash($row['superblock']);
+        $block = $blocknetd->getblock($blockhash);
+        $txid = $block['tx'][1];
+        $statement2->bindValue(':superblock', $row['superblock']);
+        $statement2->bindValue(':txid', $txid);
+        $txdets = $blocknetd->getrawtransaction($txid,1);
+        foreach($txdets['vout'] as $n => $payment) {
+            if($n < 1) {
+                continue;
+            }
+            $j++;
+            $statement2->bindValue(':amount', $payment['value']);
+            $statement2->bindValue(':addr', $payment['scriptPubKey']['addresses'][0]);
+            $statement2->execute();
+        }
+    }
+    $result->finalize();
+    $db->exec('COMMIT');
+    $statement1->close();
+    $statement2->close();
+
+    // now find the unpaid passing proposals and update their status
+    $db->exec('UPDATE "pastproposals" SET "status"="not paid" WHERE "hash" IN
+                                (SELECT "a"."hash" FROM "pastproposals" "a" LEFT JOIN "scratch" "b" 
+                                 ON "a"."superblock"="b"."superblock" AND "a"."amount"="b"."amount"
+                                 AND "a"."address"="b"."address"
+                                 WHERE "a"."status"="passed" AND "a"."superblock" IN
+                                 (SELECT "superblock" FROM "pastproposals" WHERE "status"="passed" 
+                                  GROUP BY "superblock" HAVING SUM("amount")>40000)
+                                 AND "b"."amount" IS NULL)');
+
+    //if ($i + $j > 0) {
+    //    print("Polished ".$j." proposals in ".$i." superblocks\n");
+    //}
+}
+
+function createPastProposalsContent(){
+	global $blocknetd, $db;
+	updatePastProposals();
+
 	$content['nextSuperblock'] = $blocknetd->nextsuperblock();
-	$proposals = $blocknetd->listproposals(1339200);
 	$currentBlock = $blocknetd->getblockcount();
 	$content['nextDate'] = "Estimated " . date("D j F Y H:iT", time()+($content['nextSuperblock']-$currentBlock)*60);
-	$content['budgetRequested'] = 0;
-	$content['budgetPassing'] = 0;
+	$content['budgetRequested'] = 0;         // total requested
+	$content['budgetPaid'] = 0;              // passed and paid
+	$content['budgetNotPaid'] = 0;           // passed but not paid
+	$content['budgetFailed'] = 0;            // not passed
 	$content['pCount'] = 0;
-	$content['passingCount'] = 0;
-	$i = 0;
+	$content['passedCount'] = 0;
+	$content['paidCount'] = 0;
+	$content['notPaidCount'] = 0;
+	$content['failedCount'] = 0;
+	$statement1 = $db->prepare('SELECT * FROM "pastproposals" ORDER BY "superblock"');
+	$proposals = $statement1->execute();
 	$lastsuperblock = 0;
-    foreach($proposals as $proposal){
+	$i = 0;
+    while ($proposal = $proposals->fetchArray())
+    {
 		$superblock = $proposal['superblock'];
 		if($superblock != $lastsuperblock){
 			$superblockhash = $blocknetd->getblockhash($superblock);
 			$lastsuperblock = $superblock;
 		}
-		if($superblock < $currentBlock){
-			$content['proposal'][$i]['hash'] = $proposal['hash'];
-			$content['proposal'][$i]['name'] = $proposal['name'];
-			$content['proposal'][$i]['superblock'] = $proposal['superblock'];
-			$content['proposal'][$i]['superblockhash'] = $superblockhash;
-			$content['proposal'][$i]['amount'] = $proposal['amount'];
-			$content['proposal'][$i]['address'] = $proposal['address'];
-			$content['proposal'][$i]['URL'] = $proposal['url'];
-			$content['proposal'][$i]['description'] = $proposal['description'];
-			$content['proposal'][$i]['yeas'] = $proposal['votes_yes'];
-			$content['proposal'][$i]['nays'] = $proposal['votes_no'];
-			$content['proposal'][$i]['abstains'] = $proposal['votes_abstain'];
-			$content['proposal'][$i]['status'] = $proposal['status'];
-			$content['budgetRequested'] += $proposal['amount'];
-			$content['proposal'][$i]['passingMargin'] = ($proposal['votes_yes']-$proposal['votes_no']-$proposal['votes_abstain']);
-			if($proposal['status'] == "passed") {
-				$content['budgetPassing'] += $proposal['amount'];
-				$content['passingCount'] += 1;
-			}
-			$i++;			
+		$content['proposal'][$i]['hash'] = $proposal['hash'];
+		$content['proposal'][$i]['name'] = $proposal['name'];
+		$content['proposal'][$i]['superblock'] = $proposal['superblock'];
+		$content['proposal'][$i]['superblockhash'] = $superblockhash;
+		$content['proposal'][$i]['amount'] = $proposal['amount'];
+		$content['proposal'][$i]['address'] = $proposal['address'];
+		$content['proposal'][$i]['URL'] = $proposal['url'];
+		$content['proposal'][$i]['description'] = $proposal['description'];
+		$content['proposal'][$i]['yeas'] = $proposal['yeas'];
+		$content['proposal'][$i]['nays'] = $proposal['nays'];
+		$content['proposal'][$i]['abstains'] = $proposal['abstains'];
+		$content['proposal'][$i]['status'] = $proposal['status'];
+		$content['budgetRequested'] += $proposal['amount'];
+		$content['proposal'][$i]['passingMargin'] = ($proposal['yeas']-$proposal['nays']-$proposal['abstains']);
+	    $i++;
+		if($proposal['status'] == 'passed') {
+			$content['budgetPaid'] += $proposal['amount'];
+			$content['paidCount']++;
+		}elseif($proposal['status'] == 'not paid') {
+			$content['budgetNotPaid'] += $proposal['amount'];
+			$content['notPaidCount']++;
+		}else{
+			$content['budgetFailed'] += $proposal['amount'];
+			$content['failedCount']++;
 		}
 	}
-	$content['pCount'] = $i;
+    $proposals->finalize();
+    $statement1->close(); 
+    $content['pCount'] = $i;
 	return $content;
 }
 
@@ -383,6 +787,8 @@ function createOpenOrdersContent(){
 		$content['order'][$i]['partialRepost'] = $order['partial_repost'];
 		$content['order'][$i]['partialParentId'] = $order['partial_parent_id'];
 		$content['order'][$i]['status'] = $order['status'];
+		//$content['order'][$i]['fair'] = $blocknetd->xrService('ccfairprice2',$order['maker_size'],$order['maker'],$order['taker'],$order['taker_size']);
+		$content['order'][$i]['fair'] = 'API rate limit exceeded';
 		if($order['status'] == "open"){
 			$content['openOrderCount']++;
 		}elseif($order['status'] == "rolled_back"){
@@ -443,19 +849,46 @@ function updatePastOrders() {
     }
 }
 
-function createPastOrdersContent($days = 30){
+function createPastOrdersContent($days = 1, $maker = '', $taker = '', $snode = ''){
 	global $blocknetd, $db;
 
 	updatePastOrders();
 
 	$content = [];
+	if($days == 0){   // special case: 
+		if($maker.$taker.$snode <> ''){
+			$genesis = $blocknetd->getblock($blocknetd->getblockhash(0))['time'];
+			$days = intdiv((time() - $genesis), 86400); // so long as there is some search criteria
+		}else{
+			$days = 1; // otherwise stick to the normal default
+		}
+	}
 	$content['days'] = $days;
 	$content['pastOrderCount'] = 0;
 	$blocks = $days * 1440;
 	$content['blocks'] = $blocks;
+	$content['request'] = 'days='.$days;
 
-    $statement = $db->prepare('SELECT * FROM "pastorders" WHERE "timestamp" >= :since');
+    $query = 'SELECT * FROM "pastorders" WHERE "timestamp" >= :since';
+	if($maker <> ''){
+		$query .= ' AND "maker" = :maker';
+		$content['request'] .= ' and maker='.$maker;
+	}
+	if($taker <> ''){
+		$query .= ' AND "taker" = :taker';
+		$content['request'] .= ' and taker='.$taker;
+	}
+	if($snode <> ''){
+		$query .= ' AND "nodepubkey" = :snode';
+		$content['request'] .= ' and servicenode='.$snode;
+	}
+    //print($query);
+    $statement = $db->prepare($query);
     $statement->bindValue(':since', time() - $days * 86400);
+    $statement->bindValue(':maker', $maker);
+    $statement->bindValue(':taker', $taker);
+    $statement->bindValue(':snode', $snode);
+
     $result = $statement->execute();
 	$i = 0;
     while ($order = $result->fetchArray()) {
@@ -476,17 +909,52 @@ function createPastOrdersContent($days = 30){
 	return $content;
 }
 
-function chainzAPI($query){
-	// Curl
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_URL, "https://chainz.cryptoid.info/block/api.dws?q=".$query);
-	$result = json_decode(curl_exec($ch),true);
-	if(empty($result)){
-			print("Chainz API timeout ");
-			$result = [];
+function createTradesAndFees($days = ''){
+	global $db;
+	
+	updatePastOrders();
+	
+	$content = [];
+	if($days == ''){
+		$content['period'] = 'All time';
+		$content['days'] = 0; // Special case
+	}else{
+	    $content['period'] = 'Last '.$days.' days.';
+		$content['days'] = $days;
+	    //$blocks = $days * 1440;
+	    //$content['blocks'] = $blocks;
+    }
+	$content['nodeCount'] = 0;
+	
+	$query = 'SELECT "nodepubkey", count(*) AS "trades", count(*) * 0.015 AS "fees" FROM "pastorders"';
+	if($days <> ''){
+		$query .= ' WHERE "timestamp" >= strftime("%s","now")-86400*'.$days;
+		//$content['request'] .= ' days='.$days;
 	}
-	return $result;
+	$query .= ' GROUP BY "nodepubkey" ORDER BY "fees" DESC';
+
+	//print($query);
+	$statement = $db->prepare($query);
+	
+	$result = $statement->execute();
+	$i = 0;
+	$j = 0;
+	$k = 0;
+	while ($row = $result->fetchArray()) {
+		$content['taf'][$i]['servicenode'] = $row['nodepubkey'];
+		$content['taf'][$i]['trades'] = $row['trades'];
+		$content['taf'][$i]['fees'] = $row['fees'];
+		$j += $row['trades'];
+		$k += $row['fees'];
+		$i++;
+	}
+	$result->finalize();
+    $statement->close();
+	$content['nodeCount'] = $i;
+	$content['totalTrades'] = $j;
+	$content['totalFees'] = $k;
+
+	return $content;
 }
 
 ?>

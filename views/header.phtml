@@ -7,10 +7,13 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="referrer" content="no-referrer"> 
+	<?php if($title == 'Home' or $title == 'Open Orders'){ ?>
+		<meta http-equiv="refresh" content="60">
+	<?php } ?>
 
 	<title><?=$title?> - Blocknet Monitor</title>
 
-	<link href="assets/images/favicon.ico" rel="icon">
+	<link href="assets/images/favicon.ico?ver=0001" rel="icon">
 
 	<!-- Bootstrap -->
 	<link href="assets/css/bootstrap.css" rel="stylesheet">
@@ -31,7 +34,7 @@
 	<link href="assets/css/custom.css?ver=0001" rel="stylesheet">
 
 	<!-- Lightweight tracking -->
-	<!-- script async defer data-domain="blocknetmonitor.com" src="https://plausible.io/js/plausible.js"></script -->
+	<script async defer data-domain="blocknetmonitor.com" src="https://plausible.io/js/plausible.js"></script>
   </head>
 
   <body class="nav-md">
@@ -51,15 +54,22 @@
 				<ul class="nav side-menu">
 					<a href="?p=main" <?php if($this->section=="main") echo 'class="active"'; ?>><i class="fas fa-home"></i> Main </a>
 					<a href="?p=servicenodes" <?php if($this->section=="servicenodes") echo 'class="active"'; ?>><i class="fas fa-sitemap"></i> Servicenodes </a>
+					<ul class="nav child_menu" style="display: block;">
+					    <li <?php if($this->section=="dxwallets") echo 'class="active"'; ?>><a href="?p=dxxrwallets">DX/SPV wallets</a></li>
+						<li <?php if($this->section=="xrservices") echo 'class="active"'; ?>><a href="?p=xrservices">XRouter services</a></li>
+						<li <?php if($this->section=="xcservices") echo 'class="active"'; ?>><a href="?p=xcservices">XCloud services</a></li>
+						<li <?php if($this->section=="tradesfees") echo 'class="active"'; ?>><a href="?p=tradesfees&days=30">Trade stats</a></li>
+					</ul>
 					<a href="?p=proposals" <?php if($this->section=="proposals") echo 'class="active"'; ?>><i class="far fa-paper-plane"></i> Proposals </a>
 					<a href="?p=pastproposals" <?php if($this->section=="pastproposals") echo 'class="active"'; ?>><i class="far fa-paper-plane"></i> Past Proposals </a>
 					<a href="?p=openorders" <?php if($this->section=="openorders") echo 'class="active"'; ?>><i class="fas fa-exchange-alt"></i> Open Orders </a>
-					<a href="?p=past1" <?php if($this->section=="pastorders") echo 'class="active"'; ?>><i class="fas fa-exchange-alt"></i> Past Orders (1 day) </a>
+					<a href="?p=pastorders" <?php if($this->section=="pastorders") echo 'class="active"'; ?>><i class="fas fa-exchange-alt"></i> Past Orders (1 day) </a>
 					<ul class="nav child_menu" style="display: block;">
-						<li <?php if($this->section=="past7") echo 'class="active"'; ?>><a href="?p=past7"> 7 days</a></li>
-						<li <?php if($this->section=="past14") echo 'class="active"'; ?>><a href="?p=past14">14 days</a></li>
-						<li <?php if($this->section=="past30") echo 'class="active"'; ?>><a href="?p=past30">30 days</a></li>
+						<li <?php if($this->section=="past7") echo 'class="active"'; ?>><a href="?p=pastorders&days=7"> 7 days</a></li>
+						<li <?php if($this->section=="past14") echo 'class="active"'; ?>><a href="?p=pastorders&days=14">14 days</a></li>
+						<li <?php if($this->section=="past30") echo 'class="active"'; ?>><a href="?p=pastorders&days=30">30 days</a></li>
 					</ul>
+					<!--a href="?p=defi" <?php if($this->section=="defi") echo 'class="active"'; ?>><i class="fas fa-magic"></i> DeFi </a-->
 					<a href="?p=peers" <?php if($this->section=="peers") echo 'class="active"'; ?>><i class="fas fa-user-friends"></i> Peers </a>
 					<a href="?p=blocks" <?php if($this->section=="blocks") echo 'class="active"'; ?>><i class="fas fa-cube"></i> Blocks</a>
 					<ul class="nav child_menu" style="display: block;">

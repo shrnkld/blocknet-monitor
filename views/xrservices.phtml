@@ -3,9 +3,9 @@
 			<div class="panel-body">
 				<div class="row tile_count">
 					<div class="col-md-12 col-sm-12 col-xs-12 tile_stats_count">
-						<span class="count_top"><i class="fas fa-exchange-alt"></i> BlockDX past orders</span>
-						<div class="count"><?= $content['pastOrderCount'] ?> <small>Completed</small></div>
-						<span class="count_bottom">Last <?= $content['blocks'] ?> blocks (~<?= $content['days'] ?> days)</span>
+						<span class="count_top"><i class="fas fa-exchange-alt"></i> Blocknet XRouter services</span>
+						<div class="count"><?= $content['servicesCount'] ?> <small>Services registered on the network</small></div>
+						<span class="count_bottom"></span>
 					</div>
 				</div>
 			</div>
@@ -27,52 +27,50 @@
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="x_panel">
 					<div class="x_title">
-						<h2>Past Orders<small> (showing <?=$content['request'] ?>) </small></h2>
+						<h2>XRouter services<small> (showing <?= $content['request'] ?>)</small></h2>
 						<div class="clearfix"></div>
 					</div>
 					<div class="x_content">
 						<table id="orders" class="table table-striped table-bordered table-valign">
 							<thead>
 								<tr>
-							 		<th>Time</th>
-									<th>Servicenode</th>
-									<th>Maker</th>
-									<th>Maker Amount</th>
-									<th>Taker</th>
-									<th>Taker Amount</th>
-									<th>Order ID</th>
+							 		<th>Service name</th>
+									<th>Coin</th>
+									<th>Fee</th>
+									<th>Payment address</th>
+									<th>Request limit</th>
+									<th>Fetch limit</th>
+									<th>Timeout</th>
+									<th>Disabled</th>
 									<th>Explore</th>
 								</tr>
 					  		</thead>
 							<tbody>
-								<?php if ($content['pastOrderCount'] > 0) {;
-							  		foreach($content['order'] as $order){ ?>
+								<?php if ($content['servicesCount'] > 0) {;
+							  		foreach($content['services'] as $service){ ?>
 									<tr>
-										<td><?=$order['time'] ?></td>
-										<td><?=$order['snodekey'] ?></td>
-										<td><?=$order['maker'] ?></td>
-										<td><?=$order['makerAmount'] ?></td>
-										<td><?=$order['taker'] ?></td>
-										<td><?=$order['takerAmount'] ?></td>
-										<td><?=$order['xid'] ?></td>
+										<td><?=$service['xrservice'] ?></td>
+										<td><?=$service['coin'] ?></td>
+										<td><?=$service['fee'] ?></td>
+										<td><?=$service['payment_address'] ?></td>
+										<td><?=$service['request_limit'] ?></td>
+										<td><?=$service['fetch_limit'] ?></td>
+										<td><?=$service['timeout'] ?></td>
+										<td><?=$service['disabled'] ?></td>
 										<td>										   
 											<div class="btn-group pull-right" style="padding:5px 0px 3px 0px; margin-bottom:0px">
-											<button type="button" class="btn btn-default btn-xs">Details</button>
+											    <button type="button" class="btn btn-default btn-xs">Details</button>
 												<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 													<span class="caret"></span>
 													<span class="sr-only">Toggle Dropdown</span>
 												</button>
 												<ul class="dropdown-menu">
-												    <li>Same timeframe</li>
-												    <li><a href="?p=pastorders&days=<?= $content['days'] ?>&maker=<?= $order['maker'] ?>" target="_self">This maker</a></li>
-												    <li><a href="?p=pastorders&days=<?= $content['days'] ?>&taker=<?= $order['taker'] ?>" target="_self">This taker</a></li>
-												    <li><a href="?p=pastorders&days=<?= $content['days'] ?>&maker=<?= $order['maker'] ?>&taker=<?= $order['taker'] ?>" target="_self">This pair</a></li>
-												    <li><a href="?p=pastorders&days=<?= $content['days'] ?>&maker=<?= $order['taker'] ?>&taker=<?= $order['maker'] ?>" target="_self">Reverse pair</a></li>
-												    <li><a href="?p=pastorders&days=<?= $content['days'] ?>&snode=<?= $order['snodekey'] ?>" target="_self">This servicenode</a></li>
+												    <li>XR services</li>
+												    <li><a href="?p=xrservices&snode=<?=$service['nodepubkey']?>" target="_self">This node</a></li>
+												    <li><a href="?p=xrservices&coin=<?=$service['coin']?>" target="_self">This coin</a></li>
+												    <li><a href="?p=xrservices&service=<?=$service['xrservice']?>" target="_self">This service</a></li>
 													<li class="divider"></li>
-												    <li><a href="?p=tradesfees&days=<?= $content['days'] ?>" target="_self">Trade stats</a></li>
-													<li class="divider"></li>
-													<li><a href="https://chainz.cryptoid.info/block/tx.dws?<?= $order['txid'] ?>" target="_blank"><i class="fa fa-globe fa-lg" style="color:lightblue"></i> Fee txn on Chainz</a></li>
+													<li><a href="https://chainz.cryptoid.info/block/address.dws?<?= $service['payment_address'] ?>" target="_blank"><i class="fa fa-globe fa-lg" style="color:lightblue"></i> Chainz</a></li>
 												</ul>
 											</div>										   
 								   		</td>
@@ -115,7 +113,7 @@
 				"lengthChange": true,
 				"lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
 				"bInfo": false,
-				"order": [[ 0, "desc" ]]
+				"order": [[ 0, "asc" ]]
 			} );		
 	  		});
 		</script>

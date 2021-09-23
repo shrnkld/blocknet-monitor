@@ -90,8 +90,31 @@ $db->exec('CREATE TABLE IF NOT EXISTS "pastorders"(
 
 $db->exec('CREATE TABLE IF NOT EXISTS "events"(
 	"lastorderheight" INTEGER,
+	"lastproposal" INTEGER,
 	"timestamp" INTEGER
 )');
+
+$db->exec('CREATE TABLE IF NOT EXISTS "pastproposals"(
+	"hash" VARCHAR PRIMARY KEY NOT NULL,
+	"name" VARCHAR NOT NULL,
+	"superblock" INTEGER NOT NULL,
+	"amount" INTEGER NOT NULL,
+	"address" VARCHAR NOT NULL,
+	"url" VARCHAR NOT NULL,
+	"description" VARCHAR,
+	"yeas" INTEGER NOT NULL,
+	"nays" INTEGER NOT NULL,
+	"abstains" INTEGER NOT NULL,
+	"status" VARCHAR NOT NULL
+)');
+
+$db->exec('CREATE TABLE IF NOT EXISTS "scratch"(
+   "superblock" VARCHAR NOT NULL,
+   "txid" VARCHAR NOT NULL,
+   "amount" INTEGER NOT NULL,
+   "address" VARCHAR NOT NULL
+)');
+
 
 
 // Content
@@ -103,16 +126,7 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
 	   $error = 'Node offline or incorrect RPC data';
 	}
 	$data = array('section' => 'main', 'title' => 'Home', 'content' => $content);   
-   
-// New Main Page
-}elseif($_GET['p'] == 'newmain') {   
-	try{
-	$content = createMainContent();
-	}catch(\Exception $e) {
-	   $error = 'Node offline or incorrect RPC data';
-	}
-	$data = array('section' => 'newmain', 'title' => 'Home', 'content' => $content);   
-   
+      
 // Peers Page   
 }elseif($_GET['p'] == 'peers') {
 	
@@ -137,7 +151,7 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
  
 // Servicenodes Page
 }elseif($_GET['p'] == 'servicenodes') {
-	$content = createNodesContent();
+	$content = createSNodesContent();
 	$data = array('section' => 'servicenodes', 'title' => 'Servicenodes', 'content' => $content);  
  
 // Proposals Page
@@ -147,7 +161,7 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
 
 // Past proposals Page
 }elseif($_GET['p'] == 'pastproposals') {
-	$content = createOldGovernanceContent();
+	$content = createPastProposalsContent();
 	$data = array('section' => 'pastproposals', 'title' => 'Past Proposals', 'content' => $content);
 
 // Blocks Page 
@@ -166,24 +180,74 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
 	$data = array('section' => 'openorders', 'title' => 'Open Orders', 'content' => $content);
   
 // Past Orders Page 
-}elseif($_GET['p'] == 'past1') {
-	$content= createPastOrdersContent(1);
+}elseif($_GET['p'] == 'pastorders') {
+	$days = 1;
+	$maker = '';
+	$taker = '';
+	$snode = '';
+	if(isset($_GET['days'])){
+		$days = $_GET['days'];
+	}
+	if(isset($_GET['maker'])){
+		$maker = $_GET['maker'];
+	}
+	if(isset($_GET['taker'])){
+		$taker = $_GET['taker'];
+	}
+	if(isset($_GET['snode'])){
+		$snode = $_GET['snode'];
+	}
+	$content= createPastOrdersContent($days, $maker, $taker, $snode);
 	$data = array('section' => 'pastorders', 'title' => 'Past Orders', 'content' => $content);
   
-// Past Orders Page 
-}elseif($_GET['p'] == 'past7') {
-	$content= createPastOrdersContent(7);
-	$data = array('section' => 'pastorders', 'title' => 'Past Orders', 'content' => $content);
+// DX/XR Wallets Page 
+}elseif($_GET['p'] == 'dxxrwallets') {
+	$content= createDxXrWallets();
+	$data = array('section' => 'dxxrwallets', 'title' => 'DX+XR Wallets', 'content' => $content);
   
-// Past Orders Page 
-}elseif($_GET['p'] == 'past14') {
-	$content= createPastOrdersContent(14);
-	$data = array('section' => 'pastorders', 'title' => 'Past Orders', 'content' => $content);
+// XRouter services Page 
+}elseif($_GET['p'] == 'xrservices') {
+	$service = '';
+	$coin = '';
+	$snode = '';
+	if(isset($_GET['service'])){
+		$service = $_GET['service'];
+	}
+	if(isset($_GET['coin'])){
+		$coin = $_GET['coin'];
+	}
+	if(isset($_GET['snode'])){
+		$snode = $_GET['snode'];
+	}
+	$content= createXrServices($snode, $coin, $service);
+	$data = array('section' => 'xrservices', 'title' => 'XRouter Services', 'content' => $content);
   
-// Past Orders Page 
-}elseif($_GET['p'] == 'past30') {
-	$content= createPastOrdersContent(30);
-	$data = array('section' => 'pastorders', 'title' => 'Past Orders', 'content' => $content);
+// XCloud services Page 
+}elseif($_GET['p'] == 'xcservices') {
+	$service = '';
+	$snode = '';
+	if(isset($_GET['service'])){
+		$service = $_GET['service'];
+	}
+	if(isset($_GET['snode'])){
+		$snode = $_GET['snode'];
+	}
+	$content= createXcServices($snode, $service);
+	$data = array('section' => 'xcservices', 'title' => 'XCloud Services', 'content' => $content);
+
+	// Trades and fees Page 
+}elseif($_GET['p'] == 'tradesfees') {
+	$days = '';
+	if(isset($_GET['days'])){
+		$days = $_GET['days'];
+	}
+	$content= createTradesAndFees($days);
+	$data = array('section' => 'tradesfees', 'title' => 'Trades and Fees', 'content' => $content);
+
+	// Database update Page 
+}elseif($_GET['p'] == 'dbupdate') {
+	$content= dbupdate(1);
+	$data = array('section' => 'dbupdate', 'title' => 'DB Update', 'content' => $content);
   
 // Settings Page	
 }elseif($_GET['p'] == 'settings') {
@@ -212,7 +276,8 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
 
 // About Page	
 }elseif($_GET['p'] == 'about') {
-	$data = array('section' => 'about', 'title' => 'About'); 
+	$content= dbupdate();
+	$data = array('section' => 'about', 'title' => 'About', 'content' => $content); 
 	
 }else{
 	header('Location: index.php');
