@@ -54,6 +54,10 @@ IP protection doesn't work here. If you use `Apache` you are fine, since the fol
 
 - [ ] DeFi page 
 - [ ] Extend SQLite3 usage to peers
+- [ ] Heatmap for trades
+- [ ] Servicenode details page
+- [ ] Servicenode key instead of payment address on relevant pages
+- [ ] "Fair value" indicator on open trades
 - [ ] Other brilliant stuff 
 
 
@@ -67,6 +71,7 @@ IP protection doesn't work here. If you use `Apache` you are fine, since the fol
 - [ ] Display expanded peer/block info (popup)
 - [ ] More customization settings
 - [ ] Sort mempool tx, request more
+- [ ] Proposals categories pie-chart
 
 
 
