@@ -6,6 +6,7 @@ class SNode{
 	public $snodekey; // string
 	public $tier; // string
 	public $address; // string
+	public $payment_address; // string
 	public $timeLastSeen;  // int (epoch)
 	public $timeLastSeenStr;  // string
 	public $exr; // bool
@@ -16,6 +17,7 @@ class SNode{
 	public $dxcount; // int
 	public $xrcount; // int
 	public $xccount; // int
+	public $feeDefault; // real
 	//public $servicesOriginal; // string
 	//public $ip; // string
 	//public $ipOriginal;
@@ -32,6 +34,7 @@ class SNode{
 		$this->snodekey = $snode['nodepubkey'];
 		$this->tier = $snode['tier'];
 		$this->address = $snode['address'];
+		$this->payment_address = $snode['payment_address'];
 		//$this->ip = getCleanIP($snode['addr']);
 		//$this->ipOriginal = checkIpPort($snode['addr']);
 		//$this->ipv6 = checkIfIpv6($this->ip);
@@ -44,7 +47,8 @@ class SNode{
 		$this->dxcount = $snode['dxcount'];
 		$this->xrcount = $snode['xrcount'];
 		$this->xccount = $snode['xccount'];
-		$this->services = $snode['services'];;
+		$this->services = $snode['services'];
+		$this->feeDefault = $snode['fee_default'];
 		//$this->services = getServices($snode['services']);
 		//$this->servicesOriginal = checkServiceString($snode['services']);
         //$this->country = "UN";

@@ -52,6 +52,7 @@
 							<thead>
 								<tr>
 								    <th>Address</th>
+							 		<th>Snodekey</th>
 							 		<th>Tier</th>
 									<th>Type</th>
 									<th>DX wallets</th>
@@ -68,6 +69,7 @@
 								foreach($content['nodes'] as $node){ ?>
 									<tr>
  									    <td><?=$node->address ?></td>
+										<td><?=$node->snodekey ?></td>
 										<td><?=$node->tier ?></td>
 										<td><?php if($node->exr == 1){echo "EXR";} ?></td>
 										<td><?=$node->dxcount ?></td>
@@ -86,10 +88,21 @@
     													<div class="modal-content">
       														<div class="modal-header">
 		   														<button type="button" class="close" data-dismiss="modal">&times;</button>
-        														<h4 class="modal-title">Services list for <?=$node->address?></h4>
+        														<h4 class="modal-title">Services list for <?=$node->snodekey?></h4>
       														</div>
       														<div class="modal-body" wrap="soft" style="overflow-wrap: break-word;">
-																<?= $node->services ?>
+																<h3>DX Wallets</h3>
+																<p><?php $p = strpos($node->services, 'xr::');
+						                                            if($p > 1){ echo substr($node->services,0,$p-1);} ?></p>
+							                                    <h3>XR services</h3>
+																<p><?php $q = strpos($node->services, 'xrs::', $p);
+						                                            if($q > $p){ 
+						                                                echo substr($node->services,$p,$q-$p-1);
+						                                            }else{
+							                                            echo substr($node->services,$p);
+						                                            } ?></p>
+																<h3>XC services</h3>
+							                                    <p><?php if($q > 1){ echo substr($node->services,$q);} ?></p>
       														</div>
       														<div class="modal-footer">
         														<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -103,6 +116,7 @@
 												</button>
 												<ul class="dropdown-menu">
 													<li>This node</li>
+  												    <li><a href="?p=servicenodedetails&snode=<?=$node->snodekey?>" target="_self">Summary</a></li>
   												    <li><a href="?p=xrservices&snode=<?=$node->snodekey?>" target="_self">XRservices</a></li>
   												    <li><a href="?p=xcservices&snode=<?=$node->snodekey?>" target="_self">XCservices</a></li>
 												    <li><a href="?p=pastorders&days=30&snode=<?= $node->address ?>" target="_self">30 days trades</a></li>
@@ -203,7 +217,7 @@
 				"lengthChange": true,
 				"lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
 				"bInfo": false,
-				"order": [[ 3, "desc" ]]
+				"order": [[ 4, "desc" ]]
 			} );		
 	  		});
 		</script>

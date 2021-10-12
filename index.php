@@ -154,6 +154,14 @@ if(empty($_GET) OR $_GET['p'] == 'main') {
 	$content = createSNodesContent();
 	$data = array('section' => 'servicenodes', 'title' => 'Servicenodes', 'content' => $content);  
  
+// Servicenode details Page
+}elseif($_GET['p'] == 'servicenodedetails') {
+	if(isset($_GET['snode'])){
+		$snode = $_GET['snode'];
+	}
+	$content = createSNodeDetails($snode);
+	$data = array('section' => 'servicenodedetail', 'title' => 'Servicenode Details', 'content' => $content);  
+ 
 // Proposals Page
 }elseif($_GET['p'] == 'proposals') {
 	$content = createGovernanceContent();

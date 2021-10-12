@@ -396,6 +396,26 @@ function createSNodesContent(){
     return $content;
 }
 
+function createSNodeDetails($nodepubkey){
+	global $blocknetd, $db;
+	//updateSnodesContent();
+
+	$statement1 = $db->prepare('SELECT * FROM "servicenodes" WHERE "nodepubkey" = :nodepubkey');
+	$statement1->bindValue(':nodepubkey', $nodepubkey);
+	$details = $statement1->execute();
+	$nodes = [];
+    while ($snode = $details->fetchArray())
+    {
+		$snodeObj = new SNode($snode);
+		$nodes[] = $snodeObj;
+	}
+	$content = $nodes[0];
+	//print('Node details:');
+	//var_dump($content);
+
+    return $content;
+}
+
 function createXcServices($snode = '', $service = ''){
 	global $db;
 	updateSnodesContent();

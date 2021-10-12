@@ -1,0 +1,173 @@
+		<!-- Top Info Bar -->
+		<div class="panel panel-default">  
+			<div class="panel-body">
+				<div class="row tile_count">
+					<div class="col-md-12 col-sm-12 col-xs-12 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-sitemap"></i> Node pub key</span>
+					  <div class="count"><small><?= $content->snodekey ?></small> </div>
+					  <span class="count_bottom"> </span>
+					</div>
+				</div>
+				<div class="row tile_count">
+					<div class="col-md-6 col-sm-6 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-sitemap"></i> Collateral address</span>
+					  <div class="count"><small><?= $content->address ?></small> </div>
+					  <span class="count_bottom"> </span>
+					</div>
+					<div class="col-md-6 col-sm-6 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-sitemap"></i> Payment address</span>
+					  <div class="count"><small><?= $content->payment_address ?></small> </div>
+					  <span class="count_bottom"> </span>
+					</div>
+				</div>
+    			<div class="row tile_count">
+					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-sitemap"></i> Tier </span>
+					  <div class="count"><?= $content->tier ?> </div>
+					  <span class="count_bottom"> </span>
+					</div>
+					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-sitemap"></i> EXR </span>
+					  <div class="count"><?= $content->exr == 1 ? 'Yes' : 'No' ?> </div>
+					  <span class="count_bottom"> </span>
+					</div>
+					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-sitemap"></i> DX wallets </span>
+					  <div class="count"><?= $content->dxcount ?> </div>
+					  <span class="count_bottom"> </span>
+					</div>
+					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-sitemap"></i> Trading pairs </span>
+					  <div class="count"><?= $content->dxcount * ($content->dxcount - 1) ?> </div>
+					  <span class="count_bottom"> </span>
+					</div>
+					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-sitemap"></i> XR services </span>
+					  <div class="count"><?= $content->xrcount ?> </div>
+					  <span class="count_bottom"> </span>
+					</div>
+					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-sitemap"></i> XC services </span>
+					  <div class="count"><?= $content->xccount ?> </div>
+					  <span class="count_bottom"> </span>
+					</div>
+				</div>
+    			<div class="row tile_count">
+					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-sitemap"></i> Default fee </span>
+					  <div class="count"><?= $content->feeDefault ?> </div>
+					  <span class="count_bottom"> </span>
+					</div>
+					<div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-sitemap"></i> Status </span>
+					  <div class="count"><?= $content->status ?> </div>
+					  <span class="count_bottom"> </span>
+					</div>
+					<div class="col-md-6 col-sm-4 col-xs-12 tile_stats_count">
+					  <span class="count_top"><i class="fas fa-sitemap"></i> Last seen </span>
+					  <div class="count"><?= $content->timeLastSeenStr ?> </div>
+					  <span class="count_bottom"> </span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Top Info Bar End-->
+		<div class="clearfix"></div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<?php if(!empty($error)){ ?> <div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<?= $error ?> </div><?php }
+				if(!empty($message)){ ?> <div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<?= $message ?> </div><?php } ?>
+			</div>  
+		</div>
+
+		<!-- Content -->				   
+		<div class="row">
+			<!-- Wallets list -->
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="x_panel">
+					<div class="x_title">
+  					    <ul class="nav navbar-right panel_toolbox">
+					        <li><a class="close-link"><i class="fas fa-times"></i></a></li>
+					        <li><a class="collapse-link"><i class="fas fa-chevron-up"></i></a></li>
+				        </ul>
+						<h2>DX Wallets</h2>
+						<div class="clearfix"></div>
+					</div>
+					<div class="x_content" wrap="soft" style="overflow-wrap: break-word;">
+                         <?php $p = strpos($content->services, 'xr::');
+						       if($p > 1){ echo substr($content->services,0,$p-1);} ?>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+			<!-- XRouter services -->
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="x_panel">
+					<div class="x_title">
+    					<ul class="nav navbar-right panel_toolbox">
+					        <li><a class="close-link"><i class="fas fa-times"></i></a></li>
+					        <li><a class="collapse-link"><i class="fas fa-chevron-up"></i></a></li>
+				        </ul>
+						<h2>XRouter services</h2>
+						<div class="clearfix"></div>
+					</div>
+					<div class="x_content wrap="soft" style="overflow-wrap: break-word;" >
+					<?php $q = strpos($content->services, 'xrs::', $p);
+						  if($q > $p){ 
+						     echo substr($content->services,$p,$q-$p-1);
+						  }else{
+							echo substr($content->services,$p);
+						  } ?>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+			<!-- XCloud services -->
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="x_panel">
+					<div class="x_title">
+    					<ul class="nav navbar-right panel_toolbox">
+					        <li><a class="close-link"><i class="fas fa-times"></i></a></li>
+					        <li><a class="collapse-link"><i class="fas fa-chevron-up"></i></a></li>
+				        </ul>
+						<h2>XCloud services</h2>
+						<div class="clearfix"></div>
+					</div>
+					<div class="x_content" wrap="soft" style="overflow-wrap: break-word;">
+					<?php if($q > 1){ echo substr($content->services,$q);} ?>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+
+			</div>
+		   </div>
+
+
+		<!-- /page content -->
+		</div>
+
+		<!-- footer content -->
+		<?php include('views/footer.phtml') ?>
+		<!-- /footer content -->
+		</div>
+		</div>
+
+		<!-- jQuery -->
+		<script src="assets/js/jquery.min.js"></script>
+		<!-- Bootstrap -->
+		<script src="assets/js/bootstrap.min.js"></script>
+		<!-- Datatables -->
+		<script src="assets/js/jquery.dataTables.min.js"></script>
+		<script src="assets/js/dataTables.bootstrap.min.js"></script>
+		<script src="assets/js/dataTables.buttons.min.js"></script>
+		<script src="assets/js/responsive.bootstrap.js"></script>
+
+		<!-- Custom Theme Scripts -->
+		<script src="assets/js/custom.min.js"></script>
+
+  	</body>
+</html>
