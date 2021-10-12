@@ -2,7 +2,7 @@
 		<div class='panel panel-default'>  
 			<div class='panel-body'>
 				<div class='row tile_count'>
-					<div class='col-md-2 col-sm-4 col-xs-6 tile_stats_count'>
+					<div class='col-md-3 col-sm-4 col-xs-6 tile_stats_count'>
 						<span class='count_top'><i class='far fa-paper-plane'></i> Proposals</span>
 						<div class='count'><?= $content['pCount'] ?> <small>Active</small></div>
 						<span class='count_bottom'><?= $content['passingCount'] ?> Passing</span>
@@ -12,17 +12,17 @@
 						<div class='count'><?= $content['nextSuperblock'] ?> </div>
 						<span class='count_bottom'><small><?=$content['nextDate']?></small></span>
 					</div>
-					<div class='col-md-2 col-sm-6 col-xs-6 tile_stats_count'>
+					<div class='col-md-2 col-sm-4 col-xs-6 tile_stats_count'>
 						<span class='count_top'><i class='fas fa-cube'></i> Total Requested </span>
 						<div class='count' style="color:<?=$content['reqColour']?>"><?= $content['budgetRequested'] ?> </div>
 						<span class='count_bottom'> 40000 BLOCK maximum</span>
 					</div>
-					<div class='col-md-2 col-sm-6 col-xs-6 tile_stats_count'>
+					<div class='col-md-2 col-sm-4 col-xs-6 tile_stats_count'>
 						<span class='count_top'><i class='fas fa-cube'></i> Total Passing </span>
 						<div class='count' style="color:<?=$content['passingColour']?>"><?= $content['budgetPassing'] ?></div>
 						<span class='count_bottom'> BLOCK </span>
 					</div>
-					<div class='col-md-2 col-sm-6 col-xs-6 tile_stats_count'>
+					<div class='col-md-2 col-sm-4 col-xs-6 tile_stats_count'>
 						<span class='count_top'><i class='fas fa-cube'></i> Total Remaining </span>
 						<div class='count' style="color:<?=$content['remainingColour']?>"><?= $content['budgetRemaining'] ?></div>
 						<span class='count_bottom'> BLOCK </span>
