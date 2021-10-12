@@ -13,7 +13,7 @@
 		<!-- Top Info Bar End-->
 		<div class="clearfix"></div>
 		<div class="row">
-			<div class="col-md-3 col-sm-3 col-xs-12">
+			<div class="col-md-12 col-sm-12 col-xs-12">
 				<?php if(!empty($error)){ ?> <div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<?= $error ?> </div><?php }
 				if(!empty($message)){ ?> <div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -42,6 +42,7 @@
 									<th>Type</th>
 									<th>Status</th>
 									<th>Order ID</th>
+									<th>Explore</th>
 								</tr>
 					  		</thead>
 							<tbody>
@@ -56,6 +57,29 @@
 										<td><?=$order['orderType'] ?></td>
 										<td><?=$order['status'] ?></td>
 										<td><?=$order['id'] ?></td>
+										<td>										   
+											<div class="btn-group pull-right" style="padding:5px 0px 3px 0px; margin-bottom:0px">
+											    <!--button type="button" class="btn btn-default btn-xs">Details</button-->
+												<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													<span class="caret"></span>
+													<span class="sr-only">Toggle Dropdown</span>
+												</button>
+												<ul class="dropdown-menu">
+												    <li>Last day</li>
+												    <li><a href="?p=pastorders&days=1&maker=<?= $order['maker'] ?>" target="_self">This maker</a></li>
+												    <li><a href="?p=pastorders&days=1&taker=<?= $order['taker'] ?>" target="_self">This taker</a></li>
+												    <li><a href="?p=pastorders&days=1&maker=<?= $order['maker'] ?>&taker=<?= $order['taker'] ?>" target="_self">This pair</a></li>
+												    <li><a href="?p=pastorders&days=1&maker=<?= $order['taker'] ?>&taker=<?= $order['maker'] ?>" target="_self">Reverse pair</a></li>
+													<li class="divider"></li>
+												    <li>Last 7 days</li>
+												    <li><a href="?p=pastorders&days=7&maker=<?= $order['maker'] ?>" target="_self">This maker</a></li>
+												    <li><a href="?p=pastorders&days=7&taker=<?= $order['taker'] ?>" target="_self">This taker</a></li>
+												    <li><a href="?p=pastorders&days=7&maker=<?= $order['maker'] ?>&taker=<?= $order['taker'] ?>" target="_self">This pair</a></li>
+												    <li><a href="?p=pastorders&days=7&maker=<?= $order['taker'] ?>&taker=<?= $order['maker'] ?>" target="_self">Reverse pair</a></li>
+												</ul>
+											</div>										   
+								   		</td>
+
 									</tr>
 								<?php } }?>						
 							</tbody>
