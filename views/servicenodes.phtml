@@ -51,8 +51,8 @@
 						<table id="nodes" class="table table-striped table-bordered table-valign">
 							<thead>
 								<tr>
-								    <th>Address</th>
-							 		<th>Snodekey</th>
+							 		<th>Servicenode</th>
+								    <th>Collateral address</th>
 							 		<th>Tier</th>
 									<th>Type</th>
 									<th>DX wallets</th>
@@ -68,8 +68,8 @@
 								<?php $i = 0;
 								foreach($content['nodes'] as $node){ ?>
 									<tr>
- 									    <td><?=$node->address ?></td>
 										<td><?=$node->snodekey ?></td>
+ 									    <td><?=$node->address ?></td>
 										<td><?=$node->tier ?></td>
 										<td><?php if($node->exr == 1){echo "EXR";} ?></td>
 										<td><?=$node->dxcount ?></td>
