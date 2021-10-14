@@ -569,12 +569,9 @@ function createGovernanceContent(){
 		$content['proposal'][$i]['status'] = $proposal['status'];
 		$content['budgetRequested'] += $proposal['amount'];
 		$content['proposal'][$i]['passingMargin'] = ($proposal['votes_yes']-$proposal['votes_no']-$proposal['votes_abstain']);
-		if($content['proposal'][$i]['passingMargin'] > $mnCount / 10) {
-			$content['proposal'][$i]['passing'] = "Yes";
+		if($content['proposal'][$i]['status'] == 'passing') {
 			$content['budgetPassing'] += $proposal['amount'];
 			$content['passingCount'] += 1;
-		}else{
-			$content['proposal'][$i]['passing'] = "No";
 		}
 		$i++;			
 	}
