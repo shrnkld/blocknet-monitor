@@ -1,5 +1,16 @@
 Blocknet Monitor Changelog
 ================================
+## 0.2.1 - 2021-10-12
+Add servicenode modal with services lists
+
+Add servicenode summary/details page 
+
+Add open -> closed orders links
+
+Cosmetic tweaks
+
+Fix passing proposals count
+
 ## 0.2.0 - 2021-09-04 
 Extend use of SQLite3 to past proposals and servicenodes
 

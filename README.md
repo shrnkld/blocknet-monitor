@@ -1,4 +1,4 @@
-# Blocknet Monitor v0.2.0
+# Blocknet Monitor v0.2.1
 
 Blocknet Monitor (BPM) is a visualisation and monitoring system for the Blocknet network.
 ![](assets/images/blocknetmonitor.png)
@@ -55,9 +55,10 @@ IP protection doesn't work here. If you use `Apache` you are fine, since the fol
 - [ ] DeFi page 
 - [ ] Extend SQLite3 usage to peers
 - [ ] Heatmap for trades
-- [ ] Servicenode details page
+- [x] Servicenode details page
 - [ ] Servicenode key instead of payment address on relevant pages
 - [ ] "Fair value" indicator on open trades
+- [ ] Fiat value on open/past trades
 - [ ] Other brilliant stuff 
 
 
